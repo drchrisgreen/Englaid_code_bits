@@ -18,7 +18,8 @@ def lookup(her_name, period_list, start_list, end_list):
 	IA_start = -800
 	IA_to_RO = 43
 	RO_to_EM = 410
-		
+	EM_end = 1066
+			
 	# Next, we define the sets of period terms that might relate to our six periods (lower case).
 	# The ones with closing but no opening brackets aren't a mistake, the brackets don't seem to be opened in the HER data (Wiltshire & Swindon).
 	PR_terms = set(['prehistoric','later prehistoric','prehistoric - 500000 bc to 42 ad)'])
@@ -63,6 +64,8 @@ def lookup(her_name, period_list, start_list, end_list):
 				else:
 					if end <= BA_end and start >= -3000:  # 3000 BC is actually before the Bronze Age, but I just want to separate out all of those entries that go back to -500000 or something
 						outlist.append('Bronze Age')
+					elif start == EM_end:
+						outlist.append('Medieval')
 					elif end <= BA_to_IA and start < -3000:
 						outlist.append('Prehistoric')
 					elif start < BA_to_IA and end <= IA_to_RO:
