@@ -22,15 +22,15 @@ def lookup(her_name, period_list, start_list, end_list):
 			
 	# Next, we define the sets of period terms that might relate to our six periods (lower case).
 	# The ones with closing but no opening brackets aren't a mistake, the brackets don't seem to be opened in the HER data (Wiltshire & Swindon).
-	PR_terms = set(['prehistoric','later prehistoric','prehistoric - 500000 bc to 42 ad)'])
-	BA_terms = set(['bronze age','early bronze age','middle bronze age','late bronze age','bronze age - 2350 bc to 701 bc)'])
-	IA_terms = set(['iron age','lpria','early iron age','middle iron age','late iron age','iron age - 800 bc to 42 ad)'])
-	RO_terms = set(['roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','earlier roman','later roman','roman - 43 ad to 409 ad)'])
-	EM_terms = set(['early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11','early medieval (saxon) - 410 ad to 1065 ad)'])
+	PR_terms = set(['prehistoric','later prehistoric','late prehistoric'])
+	BA_terms = set(['bronze age','early bronze age','middle bronze age','late bronze age','earlier bronze age','later bronze age'])
+	IA_terms = set(['iron age','lpria','early iron age','middle iron age','late iron age','earlier iron age','later iron age'])
+	RO_terms = set(['roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','early roman','late roman','earlier roman','later roman'])
+	EM_terms = set(['early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11'])
 	UN_terms = set(['uncertain','unknown','unknown date'])
 	
-	# if there is data in the period list we will use that:
-	if len(period_list) > 0:
+	# if there is data in the period list we will use that (if start list is empty)_:
+	if len(period_list) > 0 and len(start_list) == 0:
 		for x in period_list:
 			current = x.lower()
 			if current in PR_terms:
@@ -62,10 +62,14 @@ def lookup(her_name, period_list, start_list, end_list):
 				if end < start:  # If the end date is lower than the start date, they must be a bad date...
 					outlist.append('BAD DATE!')
 				else:
-					if end <= BA_end and start >= -3000:  # 3000 BC is actually before the Bronze Age, but I just want to separate out all of those entries that go back to -500000 or something
+					if start == 0 and end == 0:
+						outlist.append('Uncertain')
+					elif start < -3000 and end > EM_end:
+						outlist.append('Uncertain')
+					elif end <= BA_end and start >= -3000:  # 3000 BC is actually before the Bronze Age, but I just want to separate out all of those entries that go back to -500000 or something
 						outlist.append('Bronze Age')
-					elif start == EM_end:
-						outlist.append('Medieval')
+					elif start >= EM_end or (start == 0 and end >= EM_end):
+						outlist.append('BAD DATE!')
 					elif end <= BA_to_IA and start < -3000:
 						outlist.append('Prehistoric')
 					elif start < BA_to_IA and end <= IA_to_RO:
