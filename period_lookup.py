@@ -24,9 +24,9 @@ def lookup(her_name, period_list, start_list, end_list):
 	# The ones with closing but no opening brackets aren't a mistake, the brackets don't seem to be opened in the HER data (Wiltshire & Swindon).
 	PR_terms = set(['prehistoric','later prehistoric','late prehistoric'])
 	BA_terms = set(['bronze age','early bronze age','middle bronze age','late bronze age','earlier bronze age','later bronze age'])
-	IA_terms = set(['iron age','lpria','early iron age','middle iron age','late iron age','earlier iron age','later iron age'])
-	RO_terms = set(['roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','early roman','late roman','earlier roman','later roman'])
-	EM_terms = set(['early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11'])
+	IA_terms = set(['iron age','lpria','early iron age','middle iron age','late iron age','earlier iron age','later iron age','ia','mia'])
+	RO_terms = set(['roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','early roman','late roman','earlier roman','later roman','ro'])
+	EM_terms = set(['early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11','ls','ems'])
 	UN_terms = set(['uncertain','unknown','unknown date'])
 	
 	# if there is data in the period list we will use that (if start list is empty)_:
