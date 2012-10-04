@@ -22,12 +22,12 @@ def lookup(her_name, period_list, start_list, end_list):
 			
 	# Next, we define the sets of period terms that might relate to our six periods (lower case).
 	# The ones with closing but no opening brackets aren't a mistake, the brackets don't seem to be opened in the HER data (Wiltshire & Swindon).
-	PR_terms = set(['Prehistoric (Unknown)','prehistoric','later prehistoric','late prehistoric'])
-	BA_terms = set(['Prehistoric (Bronze Age)','Prehistoric (Late Bronze Age)','Prehistoric (Middle Bronze Age)','bronze age','early bronze age','middle bronze age','late bronze age','earlier bronze age','later bronze age'])
-	IA_terms = set(['Prehistoric (Early Iron Age)','Prehistoric (Iron Age)','Prehistoric (Late Iron Age)','iron age','lpria','early iron age','middle iron age','late iron age','earlier iron age','later iron age','ia','mia'])
-	RO_terms = set('[Roman (Antonine)','Roman (Aurelian)','Roman (Claudian)','Roman (Flavian)','Roman (Gordian)','Roman (Hadrianic)','Roman (Marcus Aurelius)','Roman (Nero)','Roman (Romano British)','Roman (Severan)','Roman (Tiberius)','Roman (Trajanic)','Roman (Unknown)','Roman (Valens)','roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','early roman','late roman','earlier roman','later roman','ro'])
-	EM_terms = set(['Early Medieval (Saxon/Anglian)','Early Medieval (Scandinavian)','Early Medieval (Unknown)','early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11','ls','ems'])
-	UN_terms = set(['Unknown (Unknown)','uncertain','unknown','unknown date'])
+	PR_terms = set(['prehistoric (unknown)','prehistoric','later prehistoric','late prehistoric'])
+	BA_terms = set(['prehistoric (bronze age)','prehistoric (late bronze age)','prehistoric (middle bronze age)','bronze age','early bronze age','middle bronze age','late bronze age','earlier bronze age','later bronze age'])
+	IA_terms = set(['prehistoric (early iron age)','prehistoric (iron age)','prehistoric (late iron age)','iron age','lpria','early iron age','middle iron age','late iron age','earlier iron age','later iron age','ia','mia'])
+	RO_terms = set(['roman (antonine)','roman (aurelian)','roman (claudian)','roman (flavian)','roman (gordian)','roman (hadrianic)','roman (marcus aurelius)','roman (nero)','roman (romano british)','roman (severan)','roman (tiberius)','roman (trajanic)','roman (unknown)','roman (valens)','roman','c1','c2','c3','c4','1st century','2nd century','3rd century','4th century','early roman','late roman','earlier roman','later roman','ro'])
+	EM_terms = set(['early medieval (saxon/anglian)','early medieval (scandinavian)','early medieval (unknown)','early medieval','saxon','anglian','viking','post-roman','sub-roman','anglo-saxon','dark age','dark ages','earlier medieval','c5','c6','c7','c8','c9','c10','c11','ls','ems'])
+	UN_terms = set(['unknown (unknown)','uncertain','unknown','unknown date'])
 	
 	# if there is data in the period list we will use that (if start list is empty)_:
 	if len(period_list) > 0 and len(start_list) == 0:
