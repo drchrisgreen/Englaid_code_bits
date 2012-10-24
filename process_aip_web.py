@@ -343,6 +343,21 @@ def ngrsqrlookup(ngsqr):
 	elif ngsqr == 'TV': # 	TV - 500000, 0
 		eastconv = 500000
 		northconv = 0
+	# Wales:
+	elif ngsqr == 'SC': # 	SC - 200000, 400000
+		eastconv = 200000
+		northconv = 400000
+	elif ngsqr == 'SH': # 	SH - 200000, 300000
+		eastconv = 200000
+		northconv = 300000
+	elif ngsqr == 'SM': # 	SM - 100000, 200000
+		eastconv = 100000
+		northconv = 200000
+	elif ngsqr == 'SN': # 	SN - 200000, 200000
+		eastconv = 200000
+		northconv = 200000
+	# Scotland:
+	
 	else:
 		print 'incorrect NGR sqr  ' + ngsqr  # Error if NGR letters are wrong
 		eastconv = -1
