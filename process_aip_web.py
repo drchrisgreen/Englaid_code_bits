@@ -4,6 +4,7 @@
 # The process should be:
 # 1. Download relevant spreadsheets from the AIP website and save to a folder with no other 'xls' files in it.
 # 2. Run the convertFromXls module to convert the spreadsheets to csv format and add numeric coordinates.
+#    (NB: the 'collate' attribute should either be a filename to collate results into one spreadsheet or 'N' to create an output spreadsheet for each input)
 # 3. Run the checkForDupes module to remove duplicate entries and to create separate coordinate spreadsheet.
 # 4. (OPTIONAL) Run the periodProcess module to try to minimise data loss when entering data into ArcGIS (needs adaptation for non-EngLaId).
 # 5. Run the createMultipointShapefile module to create a shapefile from the coordinate spreadsheet (REQUIRES ARCGIS).
@@ -18,12 +19,16 @@ import arcpy  # This script requires ArcPy, i.e. it must be run on a computer on
 from arcpy import env
 
 # This module converts all of the so-called 'xls' files in a specified directory into csv files (and adds numeric coordinates):
-def convertFromXls(dir, type):  # User must input directory and the file type.
+def convertFromXls(dir, type, collate):  # User must input directory and the file type.  Enter filename for collate to collate into one table or 'N' to not collate.
 	searchstr = dir + '*.' + type
+	if collate != 'N':
+		writer = csv.writer(open(dir + collate + '.csv', 'wb'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+	fileno = 1
 	for filename in glob.glob(searchstr):
 		with open(filename, 'r') as f:
-			outfilestr = filename[:-4] + '.csv'
-			writer = csv.writer(open(outfilestr, 'wb'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+			if collate == 'N':
+				outfilestr = filename[:-4] + '.csv'
+				writer = csv.writer(open(outfilestr, 'wb'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 			headerrow = 0
 			ngrpos = 0
 			crossref = ''
@@ -45,7 +50,10 @@ def convertFromXls(dir, type):  # User must input directory and the file type.
 				elif headerrow == 1 and '</tr>' in line: # i.e. end of header, so write to file
 					header.append('X')
 					header.append('Y')
-					writer.writerow(header)
+					if collate == 'N':
+						writer.writerow(header)
+					elif fileno == 1:
+						writer.writerow(header)
 					headerrow = 0
 				elif headerrow == 0 and '<tr>' in line:  # i.e. we have reached a new data entry
 					currentrow = []
@@ -130,6 +138,7 @@ def convertFromXls(dir, type):  # User must input directory and the file type.
 					crossref += '; ' + line[:pos2]
 					process_crossref = 0
 					currentrow.append(crossref)
+		fileno += 1
 			
 # Process to convert NGRS to numeric coordinates (called by module above):
 def ngrconvert(ngrstr):
@@ -374,9 +383,11 @@ def checkForDupes(infile, outfile, outfile2): # infile is the input csv file, ou
 	
 	counter = 0
 	idlist = []
+	rowstr = ''
 	for row in reader:
-		if row not in idlist:
-			idlist.append(row)
+		rowstr = str(row)
+		if rowstr not in idlist:
+			idlist.append(rowstr)
 			outrow = row
 			cgr_code = 'CGr_' + str(counter)
 			if cgr_code == 'CGr_0':
