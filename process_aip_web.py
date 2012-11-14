@@ -505,21 +505,7 @@ def periodProcess(infile, outfile): # infile is the input csv file and outfile i
 										tester = 1
 										temp = 'undated'
 						period = temp
-						if 'palaeolithic' in period or 'mesolithic' in period or 'neolithic' in period or ' pa ' in period or ' me ' in period or ' ne ' in period or ' ene ' in period or ' lne ' in period:
-							pos = montype.find(',')
-							if pos == -1:
-								pre_list.append(montype)
-							else:
-								found = 0
-								while found == 0:
-									if pos == -1:
-										pos = len(montype)
-										found = 1
-									pre_list.append(montype[:pos])
-									pos = pos + 1
-									montype = montype[pos:].lstrip()
-									pos = montype.find(',')
-						elif 'prehistoric' in period or ' pr ' in period:
+						if 'prehistoric' in period or ' pr ' in period:  # we do prehistoric first to capture the entries that say 'Late Prehistoric (Neolithic to Iron Age)'
 							pos = montype.find(',')
 							if pos == -1:
 								pr_list.append(montype)
@@ -530,6 +516,20 @@ def periodProcess(infile, outfile): # infile is the input csv file and outfile i
 										pos = len(montype)
 										found = 1
 									pr_list.append(montype[:pos])
+									pos = pos + 1
+									montype = montype[pos:].lstrip()
+									pos = montype.find(',')
+						elif 'palaeolithic' in period or 'mesolithic' in period or 'neolithic' in period or ' pa ' in period or ' me ' in period or ' ne ' in period or ' ene ' in period or ' lne ' in period:
+							pos = montype.find(',')
+							if pos == -1:
+								pre_list.append(montype)
+							else:
+								found = 0
+								while found == 0:
+									if pos == -1:
+										pos = len(montype)
+										found = 1
+									pre_list.append(montype[:pos])
 									pos = pos + 1
 									montype = montype[pos:].lstrip()
 									pos = montype.find(',')
