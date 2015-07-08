@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+}
+
+table {
+	width:100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+	width:100%;
+	height:30px;
+	background-color: #eeeff3;
+	text-align: center;
+	font-size: small;
+}
+
+path.slice{
+	stroke-width:2px;
+}
+
+polyline{
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+}
+
+</style>
+<body>
+
+<div style="width:10%;height:100%;float:left;margin-left:0;">
+	<div id="table_div">
+		<table>
+			<tr><td style="background-color: transparent"><strong>Region </strong><button class="reg_cyc_button" style="font-size: small">Cycle</button></td></tr>
+			<tr><td class="eoe_button">East of England</td></tr>
+			<tr><td class="mar_button">Marches</td></tr>
+			<tr><td style="background-color: transparent"><strong>Period </strong><button class="per_cyc_button" style="font-size: small">Cycle</button></td></tr>
+			<tr><td class="ba_button">Bronze Age</td></tr>
+			<tr><td class="ia_button">Iron Age</td></tr>
+			<tr><td class="ro_button">Roman</td></tr>
+			<tr><td class="em_button">Early medieval</td></tr>
+			<tr><td style="background-color: transparent"><strong>Connection character </strong><button class="con_cyc_button" style="font-size: small">Cycle</button></td></tr>
+			<tr><td class="spat_button">Spatial</td></tr>
+			<tr><td class="form_button">Formal</td></tr>
+			<tr><td class="phys_button">Physical</td></tr>
+			<tr><td class="mate_button">Material</td></tr>
+			<tr><td class="fune_button">Funerary</td></tr>
+			<tr><td class="othr_button">Other</td></tr>
+			<tr><td class="wide_button">Wider</td></tr>
+			<tr><td style="background-color: transparent"><button class="reset_button" style="font-size: medium"><strong>Reset all</strong></button></td></tr>
+			<tr><td style="background-color: transparent">Hover over outer segments to highlight labels</td></tr>
+		</table>
+	</div>
+</div>
+<div class="dcolumn" style="width:90%;height:100%;float:left;margin-left:0;">
+    <div id="d3_div"></div>
+</div>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var monJSON;
+var regionArray = [];
+var periodArray = [];
+var characArray = [];
+var catArray = [];
+var typeArray = [];
+
+monJSON = {
+		"monuments":[
+		{"Region":"East of England","barrowid":"AC1","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC10","englaidpers":"IA","englaidtypes":"03S;08N;08I;04C","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC100","englaidpers":"IA;RO","englaidtypes":"02K;02J","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC101","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC102","englaidpers":"RO","englaidtypes":"02H","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC103","englaidpers":"BA","englaidtypes":"02B;08D","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC104","englaidpers":"BA","englaidtypes":"08R","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC105","englaidpers":"BA","englaidtypes":"02E","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC106","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC107","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC108","englaidpers":"RO","englaidtypes":"06A","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC109","englaidpers":"EM","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC11","englaidpers":"IA","englaidtypes":"02C;02B;02A","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC110","englaidpers":"EM","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC111","englaidpers":"EM","englaidtypes":"08N","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC112","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC113","englaidpers":"BA","englaidtypes":"08D;08J;08S","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC114","englaidpers":"IA","englaidtypes":"08C","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC115","englaidpers":"BA","englaidtypes":"02R","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC116","englaidpers":"BA","englaidtypes":"02T;08B;08S","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC117","englaidpers":"BA;IA","englaidtypes":"02E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC118","englaidpers":"BA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC119","englaidpers":"BA","englaidtypes":"03I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC12","englaidpers":"RO","englaidtypes":"01E;06B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC120","englaidpers":"IA","englaidtypes":"03J","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC121","englaidpers":"IA;RO","englaidtypes":"02K;02H","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC122","englaidpers":"RO","englaidtypes":"02K","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC123","englaidpers":"BA","englaidtypes":"08D;02T","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC124","englaidpers":"BA","englaidtypes":"08C","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC125","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC126","englaidpers":"EM","englaidtypes":"02A","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC127","englaidpers":"IA","englaidtypes":"03S;08I;08C;05F","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC128","englaidpers":"RO","englaidtypes":"08I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC129","englaidpers":"BA","englaidtypes":"01E;06B","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC13","englaidpers":"RO","englaidtypes":"02A;02B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC130","englaidpers":"IA;RO","englaidtypes":"08N;06B","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC131","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC132","englaidpers":"RO","englaidtypes":"02A;08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC133","englaidpers":"BA","englaidtypes":"02H","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC134","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC135","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC136","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC137","englaidpers":"UN","englaidtypes":"03S;08C;08J;08S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC138","englaidpers":"EM","englaidtypes":"02F","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC139","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC14","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC140","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC141","englaidpers":"EM","englaidtypes":"02F","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC142","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC143","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC144","englaidpers":"BA","englaidtypes":"02T","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC145","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC146","englaidpers":"BA","englaidtypes":"02H","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC147","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC149","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC15","englaidpers":"BA","englaidtypes":"01E;06D","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC150","englaidpers":"IA","englaidtypes":"08C","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC151","englaidpers":"BA","englaidtypes":"02T","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC152","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC153","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC154","englaidpers":"BA","englaidtypes":"02A;02B","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC155","englaidpers":"IA","englaidtypes":"02A","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC156","englaidpers":"BA","englaidtypes":"02T","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC157","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC158","englaidpers":"BA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC159","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC16","englaidpers":"IA","englaidtypes":"02H","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC160","englaidpers":"RO","englaidtypes":"06D","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC161","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC162","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC163","englaidpers":"BA","englaidtypes":"08V","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC164","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC165","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC166","englaidpers":"BA","englaidtypes":"03S;08C;08S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC167","englaidpers":"RO","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC168","englaidpers":"BA","englaidtypes":"02T","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC169","englaidpers":"BA","englaidtypes":"08U","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC17","englaidpers":"BA","englaidtypes":"02E","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC170","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC171","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC172","englaidpers":"RO","englaidtypes":"01E;06D","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC173","englaidpers":"BA","englaidtypes":"08I","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC174","englaidpers":"BA;IA","englaidtypes":"03S;04D;04C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC175","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC176","englaidpers":"BA","englaidtypes":"03S;08C;01J;05I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC177","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC178","englaidpers":"BA;IA","englaidtypes":"03I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC179","englaidpers":"IA","englaidtypes":"03J","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC18","englaidpers":"IA","englaidtypes":"03S;04C;08I;08C;01L","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC180","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC181","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC182","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC183","englaidpers":"RO","englaidtypes":"06A","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC185","englaidpers":"RO","englaidtypes":"05E;01E;01J;05C;05F","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC186","englaidpers":"RO","englaidtypes":"03S;08C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC187","englaidpers":"RO","englaidtypes":"02A","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC188","englaidpers":"IA","englaidtypes":"02C","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC19","englaidpers":"IA","englaidtypes":"02C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC2","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC20","englaidpers":"RO","englaidtypes":"02K","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC25","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC26","englaidpers":"BA","englaidtypes":"08C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC27","englaidpers":"BA","englaidtypes":"08B;08N","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC28","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC29","englaidpers":"BA","englaidtypes":"03S;08C;01J","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC3","englaidpers":"BA","englaidtypes":"02B","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC30","englaidpers":"BA","englaidtypes":"01E;08I","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC31","englaidpers":"BA","englaidtypes":"02A","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC32","englaidpers":"BA","englaidtypes":"03S;01J","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC33","englaidpers":"BA","englaidtypes":"02C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC34","englaidpers":"BA","englaidtypes":"08R","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC35","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC36","englaidpers":"BA","englaidtypes":"01E;06D","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC37","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC38","englaidpers":"BA","englaidtypes":"02C","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC39","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC4","englaidpers":"IA","englaidtypes":"03S","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC40","englaidpers":"IA;RO","englaidtypes":"06B","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC41","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC42","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC43","englaidpers":"IA;RO","englaidtypes":"06B","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC44","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC45","englaidpers":"EM","englaidtypes":"02F","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC46","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC47","englaidpers":"IA","englaidtypes":"02B","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC49","englaidpers":"RO","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC5","englaidpers":"IA","englaidtypes":"02C;02A","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC50","englaidpers":"EM","englaidtypes":"02F","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC51","englaidpers":"EM","englaidtypes":"02F;08R","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC52","englaidpers":"EM","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC53","englaidpers":"UN","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC54","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC55","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC56","englaidpers":"IA","englaidtypes":"01H;08N;08B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC57","englaidpers":"IA","englaidtypes":"03S;08C","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC58","englaidpers":"PR","englaidtypes":"08I","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC59","englaidpers":"RO","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC6","englaidpers":"IA;RO","englaidtypes":"02K","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC60","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC61","englaidpers":"IA","englaidtypes":"03S;08C;08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC62","englaidpers":"RO","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC63","englaidpers":"EM","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC64","englaidpers":"UN","englaidtypes":"08B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC65","englaidpers":"BA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC66","englaidpers":"IA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC67","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC68","englaidpers":"EM","englaidtypes":"08B;08I;08N","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC69","englaidpers":"EM","englaidtypes":"03S;08C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC7","englaidpers":"RO","englaidtypes":"03S;06E","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC70","englaidpers":"EM","englaidtypes":"08C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC71","englaidpers":"EM","englaidtypes":"08I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC72","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC77","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC78","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC79","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC8","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC80","englaidpers":"BA","englaidtypes":"08D","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC81","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC82","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC83","englaidpers":"BA","englaidtypes":"08D","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"East of England","barrowid":"AC84","englaidpers":"IA","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC85","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC86","englaidpers":"IA;RO","englaidtypes":"02T","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC87","englaidpers":"RO","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC88","englaidpers":"BA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC89","englaidpers":"BA","englaidtypes":"03I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC9","englaidpers":"IA","englaidtypes":"03S;08I;04C;08N;08B","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"East of England","barrowid":"AC90","englaidpers":"BA;IA","englaidtypes":"01H","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC91","englaidpers":"IA","englaidtypes":"08C","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC92","englaidpers":"IA;RO","englaidtypes":"08I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC93","englaidpers":"BA;IA","englaidtypes":"02C;08D","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":1,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC94","englaidpers":"RO","englaidtypes":"02J;02K","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC95","englaidpers":"RO;EM","englaidtypes":"02D","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC96","englaidpers":"RO;EM","englaidtypes":"02A","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC97","englaidpers":"RO;EM","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC98","englaidpers":"BA;IA","englaidtypes":"03I","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"East of England","barrowid":"AC99","englaidpers":"EM","englaidtypes":"02A","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM100","englaidpers":"RO","englaidtypes":"06B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM101","englaidpers":"IA","englaidtypes":"03H;07A","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM102","englaidpers":"EM","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM103","englaidpers":"IA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM104","englaidpers":"RO","englaidtypes":"07H","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM105","englaidpers":"RO","englaidtypes":"08B;02E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM106","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM107","englaidpers":"BA","englaidtypes":"02S","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM108","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM109","englaidpers":"RO","englaidtypes":"08B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM110","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM111","englaidpers":"RO","englaidtypes":"08D","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM77","englaidpers":"BA;IA","englaidtypes":"01E;08K","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM78","englaidpers":"BA;IA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM81","englaidpers":"IA;RO","englaidtypes":"08K;08B;08I","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM82","englaidpers":"RO","englaidtypes":"08K","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM83","englaidpers":"BA","englaidtypes":"02B","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM84","englaidpers":"BA","englaidtypes":"02B;02H","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM86","englaidpers":"RO","englaidtypes":"07G","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM87","englaidpers":"BA","englaidtypes":"02A","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":1,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM88","englaidpers":"IA","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM89","englaidpers":"RO","englaidtypes":"03S","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333},
+		{"Region":"Marches","barrowid":"LM91","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM93","englaidpers":"RO","englaidtypes":"07G","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM94","englaidpers":"RO","englaidtypes":"07G","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM95","englaidpers":"IA","englaidtypes":"02A","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":1,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM96","englaidpers":"BA","englaidtypes":"02E","Spatialchar":1,"Formalchar":1,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":1,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM97","englaidpers":"EM","englaidtypes":"02F","Spatialchar":0,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":1,"Funerarycontinuous":0,"Otherchar":1,"Widerchar":1,"strengthconnect":2,"inversestrength":0.5},
+		{"Region":"Marches","barrowid":"LM98","englaidpers":"IA","englaidtypes":"01E","Spatialchar":1,"Formalchar":1,"Physicalchar":1,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":1,"inversestrength":1},
+		{"Region":"Marches","barrowid":"LM99","englaidpers":"RO","englaidtypes":"06A","Spatialchar":1,"Formalchar":0,"Physicalchar":0,"Materialchar":0,"Funerarychar":0,"Funerarycontinuous":0,"Otherchar":0,"Widerchar":0,"strengthconnect":3,"inversestrength":0.333333333}
+		]};
+var jsonLength = monJSON.monuments.length;
+
+var i=0;
+regionArray[i++]="East of England";
+regionArray[i++]="Marches"
+
+var i=0;
+periodArray[i++]="BA";
+periodArray[i++]="IA";
+periodArray[i++]="RO";
+periodArray[i++]="EM";
+
+var i=0;
+characArray[i++]="Spatial";
+characArray[i++]="Formal";
+characArray[i++]="Physical";
+characArray[i++]="Material";
+characArray[i++]="Funerary";
+characArray[i++]="Other";
+characArray[i++]="Wider";
+
+populateData(regionArray,periodArray,characArray);
+
+var width = (window.innerWidth * 0.9) - 50;
+var	height = window.innerHeight - 50;
+if (width < 900) { width = 900; }
+if (height < 600) { height = 600; }
+var radius = Math.min(width, height) / 2;
+var font_size = "small"
+if (width < 1000) { font_size = "x-small" }
+if (height < 800) { font_size = "x-small" }
+if (height == 600) { font_size = "xx-small" }
+    
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
+
+var colorIn = d3.scale.ordinal()
+	.range(["#fffc00", "#00a2ff", "#ffb400","#3753fe","#b3b100","#88d4ff","#a17201","#7b5cde"]);
+
+var arcInOR = 0.45
+var arcIn = d3.svg.arc()
+    .outerRadius(radius * arcInOR)
+    .innerRadius(0);
+var arcInRadius = d3.svg.arc()
+	.outerRadius(radius * (arcInOR - 0.01))
+	.innerRadius(radius * (arcInOR - 0.01))
+
+var pieIn = d3.layout.pie()
+    .sort(null)
+    .value(function(d,i) { return catArray[i][2]; });
+    
+var arcOut = d3.svg.arc()
+    .outerRadius(radius *0.63)
+    .innerRadius(radius *0.5);
+    
+var outerArc = d3.svg.arc()
+	.innerRadius(radius * 0.66)
+	.outerRadius(radius * 0.66);
+
+var pieOut = d3.layout.pie()
+    .sort(null)
+    .value(function(d,i) { return typeArray[i][2]; });
+
+var svg = d3.select("#d3_div").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  	
+change();
+
+var regBut = d3.select(".reg_cyc_button");
+regBut.on("click", function(){
+		var rLen=regionArray.length;
+		if (rLen != 1) {
+			regionArray = []
+			regionArray.push("East of England");
+			eoeBut.style("background-color","#eeeff3");
+			eoeBut.style("color","Black");
+			marBut.style("background-color","White");
+			marBut.style("color","Grey");
+		}
+		else
+		{
+			for (i=0;i<rLen;i++)
+			{
+				if (regionArray[i] == "East of England")
+				{
+					regionArray = []
+					regionArray.push("Marches");
+					marBut.style("background-color","#eeeff3");
+					marBut.style("color","Black");
+					eoeBut.style("background-color","White");
+					eoeBut.style("color","Grey");
+					break
+				}
+				if (regionArray[i] == "Marches")
+				{
+					regionArray = []
+					regionArray.push("East of England");
+					eoeBut.style("background-color","#eeeff3");
+					eoeBut.style("color","Black");
+					marBut.style("background-color","White");
+					marBut.style("color","Grey");
+					break
+				}
+			}
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+
+var eoeBut = d3.select(".eoe_button");
+eoeBut.on("click", function(){
+		var tester = 0
+		var rLen=regionArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (regionArray[i] == "East of England")
+			{
+				tester = 1;
+				regionArray.splice(i,1);
+				eoeBut.style("background-color","White");
+				eoeBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			regionArray.push("East of England");
+			eoeBut.style("background-color","#eeeff3");
+			eoeBut.style("color","Black");
+		}
+		var rLen=regionArray.length;
+		if (rLen == 0)
+		{
+			regionArray.push("Marches");
+			marBut.style("background-color","#eeeff3");
+			marBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var marBut = d3.select(".mar_button");
+marBut.on("click", function(){
+		var tester = 0
+		var rLen=regionArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (regionArray[i] == "Marches")
+			{
+				tester = 1;
+				regionArray.splice(i,1);
+				marBut.style("background-color","White");
+				marBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			regionArray.push("Marches");
+			marBut.style("background-color","#eeeff3");
+			marBut.style("color","Black");
+		}
+		var rLen=regionArray.length;
+		if (rLen == 0)
+		{
+			regionArray.push("East of England");
+			eoeBut.style("background-color","#eeeff3");
+			eoeBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var perBut = d3.select(".per_cyc_button");
+perBut.on("click", function(){
+		var rLen=periodArray.length;
+		if (rLen != 1) {
+			periodArray = []
+			periodArray.push("BA");
+			baBut.style("background-color","#eeeff3");
+			baBut.style("color","Black");
+			iaBut.style("background-color","White");
+			iaBut.style("color","Grey");
+			roBut.style("background-color","White");
+			roBut.style("color","Grey");
+			emBut.style("background-color","White");
+			emBut.style("color","Grey");
+			
+		}
+		else
+		{
+			for (i=0;i<rLen;i++)
+			{
+				if (periodArray[i] == "BA")
+				{
+					periodArray = []
+					periodArray.push("IA");
+					iaBut.style("background-color","#eeeff3");
+					iaBut.style("color","Black");
+					baBut.style("background-color","White");
+					baBut.style("color","Grey");
+					roBut.style("background-color","White");
+					roBut.style("color","Grey");
+					emBut.style("background-color","White");
+					emBut.style("color","Grey");
+					break
+				}
+				if (periodArray[i] == "IA")
+				{
+					periodArray = []
+					periodArray.push("RO");
+					roBut.style("background-color","#eeeff3");
+					roBut.style("color","Black");
+					baBut.style("background-color","White");
+					baBut.style("color","Grey");
+					iaBut.style("background-color","White");
+					iaBut.style("color","Grey");
+					emBut.style("background-color","White");
+					emBut.style("color","Grey");
+					break
+				}
+				if (periodArray[i] == "RO")
+				{
+					periodArray = []
+					periodArray.push("EM");
+					emBut.style("background-color","#eeeff3");
+					emBut.style("color","Black");
+					baBut.style("background-color","White");
+					baBut.style("color","Grey");
+					roBut.style("background-color","White");
+					roBut.style("color","Grey");
+					roBut.style("background-color","White");
+					roBut.style("color","Grey");
+					break
+				}
+				if (periodArray[i] == "EM")
+				{
+					periodArray = []
+					periodArray.push("BA");
+					baBut.style("background-color","#eeeff3");
+					baBut.style("color","Black");
+					emBut.style("background-color","White");
+					emBut.style("color","Grey");
+					roBut.style("background-color","White");
+					roBut.style("color","Grey");
+					emBut.style("background-color","White");
+					emBut.style("color","Grey");
+					break
+				}
+			}
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var baBut = d3.select(".ba_button");
+baBut.on("click", function(){
+		var tester = 0
+		var rLen=periodArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (periodArray[i] == "BA")
+			{
+				tester = 1;
+				periodArray.splice(i,1);
+				baBut.style("background-color","White");
+				baBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			periodArray.push("BA");
+			baBut.style("background-color","#eeeff3");
+			baBut.style("color","Black");
+		}
+		var rLen=periodArray.length;
+		if (rLen == 0)
+		{
+			periodArray.push("IA");
+			periodArray.push("RO");
+			periodArray.push("EM");
+			iaBut.style("background-color","#eeeff3");
+			iaBut.style("color","Black");
+			roBut.style("background-color","#eeeff3");
+			roBut.style("color","Black");
+			emBut.style("background-color","#eeeff3");
+			emBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var iaBut = d3.select(".ia_button");
+iaBut.on("click", function(){
+		var tester = 0
+		var rLen=periodArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (periodArray[i] == "IA")
+			{
+				tester = 1;
+				periodArray.splice(i,1);
+				iaBut.style("background-color","White");
+				iaBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			periodArray.push("IA");
+			iaBut.style("background-color","#eeeff3");
+			iaBut.style("color","Black");
+		}
+		var rLen=periodArray.length;
+		if (rLen == 0)
+		{
+			periodArray.push("BA");
+			periodArray.push("RO");
+			periodArray.push("EM");
+			baBut.style("background-color","#eeeff3");
+			baBut.style("color","Black");
+			roBut.style("background-color","#eeeff3");
+			roBut.style("color","Black");
+			emBut.style("background-color","#eeeff3");
+			emBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var roBut = d3.select(".ro_button");
+roBut.on("click", function(){
+		var tester = 0
+		var rLen=periodArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (periodArray[i] == "RO")
+			{
+				tester = 1;
+				periodArray.splice(i,1);
+				roBut.style("background-color","White");
+				roBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			periodArray.push("RO");
+			roBut.style("background-color","#eeeff3");
+			roBut.style("color","Black");
+		}
+		var rLen=periodArray.length;
+		if (rLen == 0)
+		{
+			periodArray.push("IA");
+			periodArray.push("BA");
+			periodArray.push("EM");
+			iaBut.style("background-color","#eeeff3");
+			iaBut.style("color","Black");
+			baBut.style("background-color","#eeeff3");
+			baBut.style("color","Black");
+			emBut.style("background-color","#eeeff3");
+			emBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var emBut = d3.select(".em_button");
+emBut.on("click", function(){
+		var tester = 0
+		var rLen=periodArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (periodArray[i] == "EM")
+			{
+				tester = 1;
+				periodArray.splice(i,1);
+				emBut.style("background-color","White");
+				emBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			periodArray.push("EM");
+			emBut.style("background-color","#eeeff3");
+			emBut.style("color","Black");
+		}
+		var rLen=periodArray.length;
+		if (rLen == 0)
+		{
+			periodArray.push("IA");
+			periodArray.push("RO");
+			periodArray.push("BA");
+			iaBut.style("background-color","#eeeff3");
+			iaBut.style("color","Black");
+			roBut.style("background-color","#eeeff3");
+			roBut.style("color","Black");
+			baBut.style("background-color","#eeeff3");
+			baBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+
+var chaBut = d3.select(".con_cyc_button");
+chaBut.on("click", function(){
+		var rLen=characArray.length;
+		if (rLen != 1) {
+			characArray = []
+			characArray.push("Spatial");
+			foBut.style("background-color","White");
+			foBut.style("color","Grey");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			maBut.style("background-color","White");
+			maBut.style("color","Grey");
+			fuBut.style("background-color","White");
+			fuBut.style("color","Grey");
+			otBut.style("background-color","White");
+			otBut.style("color","Grey");
+			wiBut.style("background-color","White");
+			wiBut.style("color","Grey");
+			phBut.style("background-color","White");
+			phBut.style("color","Grey");
+		}
+		else
+		{
+			for (i=0;i<rLen;i++)
+			{
+				if (characArray[i] == "Spatial")
+				{
+					characArray = []
+					characArray.push("Formal");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					foBut.style("background-color","#eeeff3");
+					foBut.style("color","Black");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+				if (characArray[i] == "Formal")
+				{
+					characArray = []
+					characArray.push("Physical");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","#eeeff3");
+					phBut.style("color","Black");
+					break
+				}
+				if (characArray[i] == "Physical")
+				{
+					characArray = []
+					characArray.push("Material");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					maBut.style("background-color","#eeeff3");
+					maBut.style("color","Black");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+				if (characArray[i] == "Material")
+				{
+					characArray = []
+					characArray.push("Funerary");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","#eeeff3");
+					fuBut.style("color","Black");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+				if (characArray[i] == "Funerary")
+				{
+					characArray = []
+					characArray.push("Other");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","#eeeff3");
+					otBut.style("color","Black");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+				if (characArray[i] == "Other")
+				{
+					characArray = []
+					characArray.push("Wider");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","White");
+					spBut.style("color","Grey");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","#eeeff3");
+					wiBut.style("color","Black");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+				if (characArray[i] == "Wider")
+				{
+					characArray = []
+					characArray.push("Spatial");
+					foBut.style("background-color","White");
+					foBut.style("color","Grey");
+					spBut.style("background-color","#eeeff3");
+					spBut.style("color","Black");
+					maBut.style("background-color","White");
+					maBut.style("color","Grey");
+					fuBut.style("background-color","White");
+					fuBut.style("color","Grey");
+					otBut.style("background-color","White");
+					otBut.style("color","Grey");
+					wiBut.style("background-color","White");
+					wiBut.style("color","Grey");
+					phBut.style("background-color","White");
+					phBut.style("color","Grey");
+					break
+				}
+			}
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+
+var spBut = d3.select(".spat_button");
+spBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Spatial")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				spBut.style("background-color","White");
+				spBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Spatial");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Physical");
+			characArray.push("Material");
+			characArray.push("Funerary");
+			characArray.push("Other");
+			characArray.push("Wider");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var foBut = d3.select(".form_button");
+foBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Formal")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				foBut.style("background-color","White");
+				foBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Formal");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Spatial");
+			characArray.push("Physical");
+			characArray.push("Material");
+			characArray.push("Funerary");
+			characArray.push("Other");
+			characArray.push("Wider");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var phBut = d3.select(".phys_button");
+phBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Physical")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				phBut.style("background-color","White");
+				phBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Physical");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Spatial");
+			characArray.push("Material");
+			characArray.push("Funerary");
+			characArray.push("Other");
+			characArray.push("Wider");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var maBut = d3.select(".mate_button");
+maBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Material")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				maBut.style("background-color","White");
+				maBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Material");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Physical");
+			characArray.push("Spatial");
+			characArray.push("Funerary");
+			characArray.push("Other");
+			characArray.push("Wider");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var fuBut = d3.select(".fune_button");
+fuBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Funerary")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				fuBut.style("background-color","White");
+				fuBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Funerary");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Physical");
+			characArray.push("Material");
+			characArray.push("Spatial");
+			characArray.push("Other");
+			characArray.push("Wider");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var otBut = d3.select(".othr_button");
+otBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Other")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				otBut.style("background-color","White");
+				otBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Other");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Physical");
+			characArray.push("Material");
+			characArray.push("Funerary");
+			characArray.push("Spatial");
+			characArray.push("Wider");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var wiBut = d3.select(".wide_button");
+wiBut.on("click", function(){
+		var tester = 0
+		var rLen=characArray.length;
+		for (i=0;i<rLen;i++)
+		{
+			if (characArray[i] == "Wider")
+			{
+				tester = 1;
+				characArray.splice(i,1);
+				wiBut.style("background-color","White");
+				wiBut.style("color","Grey");
+				break
+			}
+		}
+		if (tester == 0)
+		{
+			characArray.push("Wider");
+			wiBut.style("background-color","#eeeff3");
+			wiBut.style("color","Black");
+		}
+		var rLen=characArray.length;
+		if (rLen == 0)
+		{
+			characArray.push("Formal");
+			characArray.push("Physical");
+			characArray.push("Material");
+			characArray.push("Funerary");
+			characArray.push("Other");
+			characArray.push("Spatial");
+			foBut.style("background-color","#eeeff3");
+			foBut.style("color","Black");
+			phBut.style("background-color","#eeeff3");
+			phBut.style("color","Black");
+			maBut.style("background-color","#eeeff3");
+			maBut.style("color","Black");
+			fuBut.style("background-color","#eeeff3");
+			fuBut.style("color","Black");
+			otBut.style("background-color","#eeeff3");
+			otBut.style("color","Black");
+			spBut.style("background-color","#eeeff3");
+			spBut.style("color","Black");
+		}
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+	
+var resetBut = d3.select(".reset_button");
+resetBut.on("click", function(){
+		regionArray = [];
+		periodArray = [];
+		characArray = [];
+		
+		var i=0;
+		regionArray[i++]="East of England";
+		regionArray[i++]="Marches";
+
+		var i=0;
+		periodArray[i++]="BA";
+		periodArray[i++]="IA";
+		periodArray[i++]="RO";
+		periodArray[i++]="EM";
+
+		var i=0;
+		characArray[i++]="Spatial";
+		characArray[i++]="Formal";
+		characArray[i++]="Physical";
+		characArray[i++]="Material";
+		characArray[i++]="Funerary";
+		characArray[i++]="Other";
+		characArray[i++]="Wider";
+		
+		eoeBut.style("background-color","#eeeff3");
+		eoeBut.style("color","Black");
+		marBut.style("background-color","#eeeff3");
+		marBut.style("color","Black");
+		
+		baBut.style("background-color","#eeeff3");
+		baBut.style("color","Black");
+		iaBut.style("background-color","#eeeff3");
+		iaBut.style("color","Black");
+		roBut.style("background-color","#eeeff3");
+		roBut.style("color","Black");
+		emBut.style("background-color","#eeeff3");
+		emBut.style("color","Black");
+		
+		spBut.style("background-color","#eeeff3");
+		spBut.style("color","Black");
+		foBut.style("background-color","#eeeff3");
+		foBut.style("color","Black");
+		phBut.style("background-color","#eeeff3");
+		phBut.style("color","Black");
+		maBut.style("background-color","#eeeff3");
+		maBut.style("color","Black");
+		fuBut.style("background-color","#eeeff3");
+		fuBut.style("color","Black");
+		otBut.style("background-color","#eeeff3");
+		otBut.style("color","Black");
+		wiBut.style("background-color","#eeeff3");
+		wiBut.style("color","Black");
+		
+		populateData(regionArray,periodArray,characArray);
+		change();
+	});
+  	
+function change() {
+	
+	if (catArray.length > 0)
+	{
+		svg.append("g")
+			.attr("class", "arcIn");
+		svg.append("g")
+			.attr("class", "lines");
+		svg.append("g")
+			.attr("class", "arcOut");
+		svg.append("g")
+			.attr("class", "labels");
+	
+		var dur_ms = 50;
+	
+		/* ------- INNER PIE -------*/
+	
+		var arcInG = svg.select(".arcIn").selectAll()
+		  .data(pieIn(catArray), function(d) { return d.data[0]; });
+
+		arcInG.enter()
+		  .append("path")
+		  .attr("d", arcIn)
+		  .attr("id",function(d) {
+				return "seg_" + d.data[1];
+			})
+		  .style("stroke", "White")
+		  .style("stroke-width","0.75")
+		  .style("fill", function(d,i) { return colorIn(d.data[0]); })
+	  
+		arcInG.enter()
+		  .append("text")
+		  .attr("dy", ".35em")
+		  .style("text-anchor", function(d) {
+		  		if (catArray.length > 1)
+				{
+					return midAngle(d) < Math.PI ? "end":"start";
+				}
+				else
+				{
+					return "middle";
+				}
+		   })
+		  .style("fill", "Black")
+		  .style("font", "bold " + font_size + " Arial")
+		  .style("text-shadow", "-1px -1px 0.1em #FFF,1px -1px 0.1em #FFF,-1px 1px 0.1em #FFF,1px 1px 0.1em #FFF")
+		  .text(function(d) { return d.data[0]; })
+		  .attr("transform", function(d) {
+				if (catArray.length > 1)
+				{
+					d.outerRadius = arcIn.outerRadius; 
+					d.innerRadius = arcIn.outerRadius/2;
+					return "translate(" + arcInRadius.centroid(d) + ")rotate(" + angle(d) + ")";
+				}
+				else
+				{
+					return "translate(" + 0 + ")";
+				}
+			});
+	
+		arcInG.exit()
+			.remove();
+		
+		/* ------- OUTER PIE -------*/
+	
+		var colorOut1 = d3.scale.ordinal()
+			.range(["#fffc00", "#b3b100"]);
+	
+		var colorOut2 = d3.scale.ordinal()
+			.range(["#00a2ff", "#88d4ff"]);
+
+		var colorOut3 = d3.scale.ordinal()
+			.range(["#ffb400", "#a17201"]);
+
+		var colorOut4 = d3.scale.ordinal()
+			.range(["#3753fe", "#7b5cde"]);
+		
+		var colorOut5 = d3.scale.ordinal()
+			.range(["#b3b100", "#fffc00"]);
+	
+		var colorOut6 = d3.scale.ordinal()
+			.range(["#88d4ff", "#00a2ff"]);
+
+		var colorOut7 = d3.scale.ordinal()
+			.range(["#a17201", "#ffb400"]);
+
+		var colorOut8 = d3.scale.ordinal()
+			.range(["#7b5cde", "#3753fe"]);
+	
+		var arcOutG = svg.select(".arcOut").selectAll()
+		  .data(pieOut(typeArray), function(d) { return d.data[0]; });
+	
+		var tester = '';
+		arcOutG.enter()
+		  .append("path")
+		  .attr("d", arcOut)
+		  .attr("id",function(d) {
+				return d.data[1];
+		  })
+		  .style("stroke", "White")
+		  .style("stroke-width","0.75")
+		  .style("fill", function(d,i) { 
+				var testStr = d.data[1].search('01');
+				if (testStr != -1){
+					return colorOut1(d.data[0]);
+				}
+				var testStr = d.data[1].search('02');
+				if (testStr != -1){
+					return colorOut2(d.data[0]);
+				}
+				var testStr = d.data[1].search('03');
+				if (testStr != -1){
+					return colorOut3(d.data[0]);
+				}
+				var testStr = d.data[1].search('04');
+				if (testStr != -1){
+					return colorOut4(d.data[0]);
+				}
+				var testStr = d.data[1].search('05');
+				if (testStr != -1){
+					return colorOut5(d.data[0]);
+				}
+				var testStr = d.data[1].search('06');
+				if (testStr != -1){
+					return colorOut6(d.data[0]);
+				}
+				var testStr = d.data[1].search('07');
+				if (testStr != -1){
+					return colorOut7(d.data[0]);
+				}
+				var testStr = d.data[1].search('08');
+				if (testStr != -1){
+					return colorOut8(d.data[0]);
+				}
+			})
+			.on("mouseover", function(d) {
+					d3.select(this)
+					  .style("stroke", "Black")
+					  .style("stroke-width","2")
+					  .moveToFront()
+					var toSelect = "text#lbl_" + this.id;
+					d3.select(toSelect)
+					  .moveToFront()
+					  .style("font", "bold " + font_size + " Arial")
+					  .style("text-shadow", "-1px -1px 0 #FFF,1px -1px 0 #FFF,-1px 1px 0 #FFF,1px 1px 0 #FFF")
+					  .style("fill", "Black");
+			})
+			.on("mouseout", function(d) {
+					var tester = '';
+					var counter = 0;
+					d3.select(this)
+						.style("stroke", "White")
+						.style("stroke-width","0.75")
+					var toSelect = "text#lbl_" + this.id;
+					d3.select(toSelect)
+					  .style("font", font_size + " Arial")
+					  .style("text-shadow", "0 0 0 #FFF")
+					  .style("fill", "Gray");
+			});
+		
+		arcOutG.exit()
+			.remove();
+		
+		/* ------- TEXT LABELS -------*/
+
+		var text = svg.select(".labels").selectAll("text")
+			.data(pieOut(typeArray), function(d) { return d.data[0]; });
+
+		text.enter()
+			.append("text")
+			.attr("dy", ".35em")
+			.attr("id",function(d) {
+				return "lbl_" + d.data[1];
+			})
+			.style("fill", "Gray")
+			.style("font", font_size + " Arial")
+			.text(function(d) {
+				return d.data[0];
+			});
+
+		text.transition().duration(dur_ms)
+			.attrTween("transform", function(d) {
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				return function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					return "translate("+ pos + ")rotate(" + angle(d)+")";
+				};
+			})
+			.styleTween("text-anchor", function(d){
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				return function(t) {
+					var d2 = interpolate(t);
+					if (typeArray.length > 1)
+					{
+						var mA = midAngle(d2);
+						if (mA == 90)
+						{
+							return "start";
+						}
+						else
+						{
+							return mA < Math.PI ? "start":"end";
+						}
+					}
+					else
+					{
+						return "start";
+					}
+				};
+			});
+
+		text.exit()
+			.remove();
+
+		/* ------- SLICE TO TEXT POLYLINES -------*/
+
+		var polyline = svg.select(".lines").selectAll("polyline")
+			.data(pieOut(typeArray), function(d) { return d.data[0]; });
+	
+		polyline.enter()
+			.append("polyline");
+
+		polyline.transition().duration(dur_ms)
+			.attrTween("points", function(d){
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				return function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+					return [arcOut.centroid(d2), outerArc.centroid(d2)];
+				};			
+			});
+	
+		polyline.exit()
+			.remove();
+	}
+	else
+	{
+		svg.selectAll("*").remove();
+	}		
+}
+
+function angle(d) {
+      var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+      return a > 90 ? a - 180 : a;
+}
+
+function midAngle(d){
+	return d.startAngle + (d.endAngle - d.startAngle)/2;
+}
+  
+function populateData(regions, periods, characters) {
+
+	var i=0;
+	catArray[i++]=["Agriculture & subsistence","01",0];
+	catArray[i++]=["Religious, ritual and funerary","02",0];
+	catArray[i++]=["Domestic and civil","03",0];
+	catArray[i++]=["Architectural forms","04",0];
+	catArray[i++]=["Industrial","05",0];
+	catArray[i++]=["Communication and transport","06",0];
+	catArray[i++]=["Defensive","07",0];
+	catArray[i++]=["Other","08",0];
+
+	var i=0;
+	typeArray[i++]=["Field system","01E",0];
+	typeArray[i++]=["Pit alignment","01H",0];
+	typeArray[i++]=["Waterhole / pond / well","01J",0];
+	typeArray[i++]=["Granary","01L",0];
+	typeArray[i++]=["Inhumation burial","02A",0];
+	typeArray[i++]=["Cremation burial","02B",0];
+	typeArray[i++]=["Unspecified burial","02C",0];
+	typeArray[i++]=["Inhumation cemetery","02D",0];
+	typeArray[i++]=["Cremation cemetery","02E",0];
+	typeArray[i++]=["Unspecified cemetery","02F",0];
+	typeArray[i++]=["Barrow","02H",0];
+	typeArray[i++]=["Temple","02J",0];
+	typeArray[i++]=["Shrine / sanctuary","02K",0];
+	typeArray[i++]=["Pyre","02R",0];
+	typeArray[i++]=["Cursus","02S",0];
+	typeArray[i++]=["Barrow development","02T",0];
+	typeArray[i++]=["Hillfort / promontory fort","03H",0];
+	typeArray[i++]=["Unenclosed settlement","03I",0];
+	typeArray[i++]=["Enclosed settlement","03J",0];
+	typeArray[i++]=["Unspecified settlement","03S",0];
+	typeArray[i++]=["Roundhouse","04C",0];
+	typeArray[i++]=["Longhouse","04D",0];
+	typeArray[i++]=["Iron working site","05C",0];
+	typeArray[i++]=["Quarry","05E",0];
+	typeArray[i++]=["Pottery manufacturing site","05F",0];
+	typeArray[i++]=["Salt production site","05I",0];
+	typeArray[i++]=["Road","06A",0];
+	typeArray[i++]=["Trackway","06B",0];
+	typeArray[i++]=["Drove road","06D",0];
+	typeArray[i++]=["Quay / jetty / harbour","06E",0];
+	typeArray[i++]=["Hillfort","07A",0];
+	typeArray[i++]=["Marching camp","07G",0];
+	typeArray[i++]=["Other military","07H",0];
+	typeArray[i++]=["Ditch","08B",0];
+	typeArray[i++]=["Pit","08C",0];
+	typeArray[i++]=["Find(s)","08D",0];
+	typeArray[i++]=["Enclosure","08I",0];
+	typeArray[i++]=["Gully","08J",0];
+	typeArray[i++]=["Building","08K",0];
+	typeArray[i++]=["Boundary / land division","08N",0];
+	typeArray[i++]=["Ring ditch","08R",0];
+	typeArray[i++]=["Posthole","08S",0];
+	typeArray[i++]=["Structure","08U",0];
+	typeArray[i++]=["Post alignment","08V",0];
+
+	var catLength = catArray.length;
+	var typeLength = typeArray.length;
+	var regLength = regions.length;
+	var perLength = periods.length;
+	var charLength = characters.length;
+	
+	for (i=0;i<jsonLength;i++)
+	{
+		var charTest = 0
+		for (m=0;m<charLength;m++)
+		{
+			if (characters[m] == 'Spatial') {
+				charTest = charTest + monJSON.monuments[i].Spatialchar;
+			}
+			else if (characters[m] == 'Formal') {
+				charTest = charTest + monJSON.monuments[i].Formalchar;
+			}
+			else if (characters[m] == 'Physical') {
+				charTest = charTest + monJSON.monuments[i].Physicalchar;
+			}
+			else if (characters[m] == 'Material') {
+				charTest = charTest + monJSON.monuments[i].Materialchar;
+			}
+			else if (characters[m] == 'Funerary') {
+				charTest = charTest + monJSON.monuments[i].Funerarychar;
+			}
+			else if (characters[m] == 'Other') {
+				charTest = charTest + monJSON.monuments[i].Otherchar;
+			}
+			else if (characters[m] == 'Wider') {
+				charTest = charTest + monJSON.monuments[i].Widerchar;
+			}
+		}
+		if (charTest > 0) {
+			for (k=0;k<regLength;k++)
+			{
+				var testStr = monJSON.monuments[i].Region.search(regions[k]); 
+				if (testStr != -1) {
+					for (l=0;l<perLength;l++)
+					{
+						var testStr = monJSON.monuments[i].englaidpers.search(periods[l]); 
+						if (testStr != -1) {
+							for (j=0;j<catLength;j++)
+							{
+								var testStr = monJSON.monuments[i].englaidtypes.split(catArray[j][1]).length - 1; 
+								if (testStr != -1) {
+									catArray[j][2] = catArray[j][2] + (testStr * monJSON.monuments[i].inversestrength);
+								}
+							}
+							for (j=0;j<typeLength;j++)
+							{
+								var testStr = monJSON.monuments[i].englaidtypes.search(typeArray[j][1]); 
+								if (testStr != -1) {
+									typeArray[j][2] = typeArray[j][2] + monJSON.monuments[i].inversestrength;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+	
+	var catArray_needed = [];
+	var j=0;
+	for(i=0;i<catLength;i++)
+	{
+		if (catArray[i][2] > 0) {
+			catArray_needed[j++]=catArray[i]
+		}
+	}
+	catArray = catArray_needed;
+	
+	var typeArray_needed = [];
+	var j=0;
+	for(i=0;i<typeLength;i++)
+	{
+		if (typeArray[i][2] > 0) {
+			typeArray_needed[j++]=typeArray[i]
+		}
+	}
+	typeArray = typeArray_needed;
+}
+
+</script>
+</body>
