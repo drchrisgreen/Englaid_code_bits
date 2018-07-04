@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="En">
+<head>
+<title>Places of Worship in Leicester</title>
+<meta name="description" content="This webpage contains mapping showing current and former places of worship in Leicester"/>
+<meta name="keywords" content="Leicester, worship, church, churches, temple, temples"/>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<link href="css/header.css" rel="stylesheet" type="text/css"/>
+<link href="css/headerfooter/headerfooter.css" rel="stylesheet" type="text/css"/>
+<link href="css/footer.css" rel="stylesheet" type="text/css"/>
+<link href="css/headerfooter/headerfootercolours.css" rel="stylesheet" type="text/css"/>
+<link href="css/print.css" rel="stylesheet" type="text/css" media="print"/>
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0px; padding: 0px }
+  #map_canvas { height: 100% }
+.style2 {color: #8B0000}
+</style>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+<script type="text/javascript">
+  
+  //Variables declared here are used by more than one function.
+  var map;
+  var bounds;
+  var markersArray = [];
+  var typeArray = [];
+  var hideGone;
+  var infowindow = new google.maps.InfoWindow();
+  var geocoder = new google.maps.Geocoder();
+  var worshipJSON
+  //These four variables are the various images used by the map markers.
+  var img_dest = new google.maps.MarkerImage("marker1.png",
+      // This marker is 15 x 15
+      new google.maps.Size(15, 15),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is at 7,7
+      new google.maps.Point(7, 7));
+  var img_no = new google.maps.MarkerImage("marker2.png",
+      // This marker is 15 x 15
+      new google.maps.Size(15, 15),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is at 7,7
+      new google.maps.Point(7, 7));
+  var img_yes = new google.maps.MarkerImage("marker3.png",
+      // This marker is 15 x 15
+      new google.maps.Size(15, 15),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is at 7,7
+      new google.maps.Point(7, 7));
+  var img_unk = new google.maps.MarkerImage("marker4.png",
+      // This marker is 15 x 15
+      new google.maps.Size(15, 15),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is at 7,7
+      new google.maps.Point(7, 7));
+  // This marker is for the processing icon
+  var img_proc = new google.maps.MarkerImage("processing.png",
+      // This marker is 225 x 41
+      new google.maps.Size(225, 41),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is at 112,20
+      new google.maps.Point(112, 20));
+  
+  function createdata() {
+  		//This function creates and populates the JSON object that holds all of the attribute and geometric data for our sites.
+		//Use this code after coords } to add images (set the width to 350 pixels and the height to the resulting equivalent - image will be clickable to see full size): , "image": { "url": "images/locations/?.jpg", "width": 350, "height": ? }
+		worshipJSON = {
+			"type": "FeatureCollection",
+			"features": [
+			{ "type": "Feature", "properties": { "ID_NO": "1", "RELIGION": "Medieval church (destroyed)", "NAME": "St Mary de Pratis (St Mary of the Meadows)", "LOCATION": "North-west of Abbey (ruins in Abbey Park)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136888, 52.649037 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "10", "RELIGION": "Medieval church (destroyed)", "NAME": "Our Lady of the Bridge (St Mary de Brigge)", "LOCATION": "On West Bridge", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.142120, 52.633578 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "100", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Bishop Street (formerly Bishopgate Street)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.131900, 52.633189 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "101", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Granby Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128608, 52.633105 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "101B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Granby Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128569, 52.633083 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "102", "RELIGION": "Brethren", "NAME": "", "LOCATION": "Bowling Green Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.132937, 52.632957 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "103", "RELIGION": "Methodist", "NAME": "Temperance Hall", "LOCATION": "Granby Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127896, 52.632419 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "103B", "RELIGION": "New Jerusalem Church", "NAME": "Temperance Hall", "LOCATION": "Granby Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127864, 52.632401 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "104", "RELIGION": "Christadelphian", "NAME": "", "LOCATION": "Dover Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.129063, 52.632114 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "104B", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Dover Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.129118, 52.632129 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "105", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Belvoir Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.132028, 52.632293 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "106", "RELIGION": "Brethren", "NAME": "", "LOCATION": "2 King Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.132406, 52.631814 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "107", "RELIGION": "Brethren", "NAME": "Gospel Hall", "LOCATION": "York Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.130064, 52.631664 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "107B", "RELIGION": "Baptist", "NAME": "Zoar Chapel", "LOCATION": "York Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.130090, 52.631672 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "107C", "RELIGION": "Spiritualist", "NAME": "Leicester Spiritualist Society", "LOCATION": "York Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.130119, 52.631681 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "108", "RELIGION": "Baptist", "NAME": "Providence Chapel", "LOCATION": "Newarke Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134732, 52.631659 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "109", "RELIGION": "Baptist", "NAME": "", "LOCATION": "8 New Walk", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.131353, 52.630947 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "109B", "RELIGION": "Swedenborgians", "NAME": "Leicestershire Sunday School Union Centernary Memorial Hall", "LOCATION": "8 New Walk", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.131315, 52.630977 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "11", "RELIGION": "Medieval church (destroyed)", "NAME": "Grey Friars", "LOCATION": "Between Friar Lane and St Martins", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136016, 52.633776 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "110", "RELIGION": "Catholic Apostolic Church", "NAME": "", "LOCATION": "New Walk", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.131370, 52.630774 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "111", "RELIGION": "Catholic", "NAME": "Holy Cross Priory", "LOCATION": "Wellington Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.129890, 52.630575 ] }, "image": { "url": "images/locations/111.jpg", "width": 350, "height": 467 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "112", "RELIGION": "Unitarian", "NAME": "Free Christian Church", "LOCATION": "Wellington Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128865, 52.630068 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "113", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "York Street (off Welford Road, latterly York Road)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134479, 52.630804 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "113B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "York Street (off Welford Road, latterly York Road)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134446, 52.630809 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "113C", "RELIGION": "Mission", "NAME": "Paradise Mission", "LOCATION": "York Street (off Welford Road, latterly York Road)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134416, 52.630816 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "114", "RELIGION": "Mission", "NAME": "", "LOCATION": "Paradise Place, Oxford Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134447, 52.629324 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "115", "RELIGION": "Mission", "NAME": "", "LOCATION": "Clinton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134223, 52.628828 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "116", "RELIGION": "Presbyterian", "NAME": "", "LOCATION": "Infirmary Square (near)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134964, 52.628662 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "117", "RELIGION": "Mission", "NAME": "", "LOCATION": "Upper King Street, Trinity Lane", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.132129, 52.628447 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "118", "RELIGION": "Anglican", "NAME": "Holy Trinity", "LOCATION": "Regent Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.130817, 52.628475 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "119", "RELIGION": "Spiritualist", "NAME": "Progressive Spiritual Society", "LOCATION": "Queen Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126320, 52.635137 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "12", "RELIGION": "Medieval church (destroyed)", "NAME": "St Mary in the Newarke (The Annunciation of the Lady of the Newarke)", "LOCATION": "Site of De Montfort University, The Newarke", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.139358, 52.630933 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "120", "RELIGION": "Serbian Orthodox Church", "NAME": "", "LOCATION": "Rutland Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126576, 52.634463 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "120B", "RELIGION": "Anglican", "NAME": "St George", "LOCATION": "Rutland Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.126701, 52.634463 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "121", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Peel Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123427, 52.634129 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "121B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Peel Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123392, 52.634110 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "121C", "RELIGION": "Mission", "NAME": "", "LOCATION": "Peel Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123355, 52.634096 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "122", "RELIGION": "Catholic Apostolic Church", "NAME": "", "LOCATION": "Northampton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126310, 52.633170 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "123", "RELIGION": "Mission", "NAME": "", "LOCATION": "Newport Place", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127009, 52.632660 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "124", "RELIGION": "Presbyterian", "NAME": "St Stephen's United Presbyterian Church", "LOCATION": "London Road (Station Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125762, 52.631701 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "125", "RELIGION": "Methodist", "NAME": "St Pauls", "LOCATION": "London Road (Station Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125300, 52.631462 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "126", "RELIGION": "Congregational", "NAME": "Wycliffe (Wickliff) Church", "LOCATION": "College Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.121040, 52.630601 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "127", "RELIGION": "Anglican", "NAME": "St John the Divine (also 'the Evangelist')", "LOCATION": "South Albion Street \/ Ashwell Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.126550, 52.630410 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "128", "RELIGION": "Congregational", "NAME": "", "LOCATION": "London Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123399, 52.630035 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "129", "RELIGION": "Sikh", "NAME": "Sant Nirankari Mandal", "LOCATION": "Prebend Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.122543, 52.629928 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "129B", "RELIGION": "Society of Friends (Quakers)", "NAME": "", "LOCATION": "Prebend Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.122516, 52.629944 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "13", "RELIGION": "Medieval church (destroyed)", "NAME": "St Sepulchre (later St James c.1500)", "LOCATION": "On site of Royal Infirmary", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134112, 52.627510 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "130", "RELIGION": "Christadelphian", "NAME": "Waterloo Hall", "LOCATION": "Waterloo Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126368, 52.629646 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "131", "RELIGION": "Salvation Army", "NAME": "Marston Hall", "LOCATION": "Marston Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117124, 52.634768 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "131B", "RELIGION": "Spiritualist", "NAME": "Progressive Spiritualist Nationalist Church", "LOCATION": "Marston Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117098, 52.634772 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "131C", "RELIGION": "Mission", "NAME": "Marston Hall", "LOCATION": "Marston Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117073, 52.634776 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "132", "RELIGION": "Mission", "NAME": "", "LOCATION": "Upper Conduit Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117770, 52.633180 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "133", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "Guthlaxton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.115720, 52.633060 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "134", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Stoughton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.115100, 52.632734 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "135", "RELIGION": "Mission", "NAME": "", "LOCATION": "Framland Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117718, 52.632096 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "136", "RELIGION": "Mission", "NAME": "", "LOCATION": "Guthlaxton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117750, 52.631722 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "137", "RELIGION": "Mission", "NAME": "Gospel Meeting Room", "LOCATION": "Gopsall Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.115188, 52.631411 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "138", "RELIGION": "Methodist", "NAME": "Earl Howe Memorial Church", "LOCATION": "Saxby Street (formerly Saxe-Coburg Street)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.118466, 52.630165 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "139", "RELIGION": "Anglican", "NAME": "St Peter", "LOCATION": "St Peter's Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.116113, 52.630056 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "14", "RELIGION": "Mission", "NAME": "", "LOCATION": "Barston Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135418, 52.641442 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "140", "RELIGION": "Mission", "NAME": "", "LOCATION": "King's Newton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.111976, 52.629808 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "141", "RELIGION": "Evangelical Free Church", "NAME": "Melbourne Hall Evangelical Free Church", "LOCATION": "Melbourne Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113616, 52.629858 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "142", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Chandos Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.112067, 52.628926 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "142B", "RELIGION": "Mission", "NAME": "", "LOCATION": "Chandos Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.112060, 52.628900 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "143", "RELIGION": "Methodist", "NAME": "Beaumont Hall", "LOCATION": "Beaumanor Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.131490, 52.660414 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "144", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Ingold Avenue, Stocking Farm", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.143185, 52.662209 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "145", "RELIGION": "Anglican", "NAME": "Church of Christ the King", "LOCATION": "Beaumont Way", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.166546, 52.666944 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "146", "RELIGION": "Anglican", "NAME": "St Luke", "LOCATION": "Halifax Drive, Stocking Farm", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.141089, 52.661860 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "147", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "Community of Christ \/ Reorganised Church of Jesus Christ of Latter Day Saints", "LOCATION": "Abbey Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.133214, 52.659581 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "147B", "RELIGION": "Mission", "NAME": "", "LOCATION": "330 Abbey Lane", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.133306, 52.659592 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "148", "RELIGION": "Catholic", "NAME": "St Patrick", "LOCATION": "Beaumont Leys Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.142361, 52.658368 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "149", "RELIGION": "Mission", "NAME": "Hope Mission Hall", "LOCATION": "Ancor Street (formerly Hope Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.132383, 52.656917 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "15", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Friday Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138436, 52.641298 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "150", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Watling Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134316, 52.642367 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "151", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Abbey Gate", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.142154, 52.644776 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "152", "RELIGION": "Harvest City Church", "NAME": "", "LOCATION": "St John Street, Burleys Way", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.133431, 52.640783 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "153", "RELIGION": "Baptist", "NAME": "Archdeacon Lane Baptist Church", "LOCATION": "Buckminster Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.153635, 52.647855 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "154", "RELIGION": "Methodist", "NAME": "Epworth Hall", "LOCATION": "Blackbird Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.148477, 52.645533 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "155", "RELIGION": "Anglican", "NAME": "St Leonard", "LOCATION": "Woodgate", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.144299, 52.643791 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "156", "RELIGION": "Leicester Christian Fellowship", "NAME": "All Nations Centre", "LOCATION": "10 Frog Island", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.143543, 52.641705 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "157", "RELIGION": "Salvation Army", "NAME": "Citadel", "LOCATION": "Kildare Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.130054, 52.637088 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "158", "RELIGION": "Spiritualist", "NAME": "National Spiritualist Church", "LOCATION": "Vaughan Way", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.136956, 52.638028 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "159", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "Great Central Street (All Saints Open corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.141311, 52.638059 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "16", "RELIGION": "Anglican", "NAME": "St Margaret \/ St Margaret & All Saints", "LOCATION": "St Margaret's Way (formerly part of Church Gate)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.136076, 52.640439 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "160", "RELIGION": "Methodist", "NAME": "St Nicholas Street Memorial Church", "LOCATION": "Fosse Road North", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.151583, 52.640182 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "161", "RELIGION": "Mission", "NAME": "", "LOCATION": "Ivanhoe Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.155982, 52.640232 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "162", "RELIGION": "Anglican", "NAME": "St Augustine", "LOCATION": "Fosse Road North", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.152901, 52.639596 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "163", "RELIGION": "Mission", "NAME": "", "LOCATION": "All Saints Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.143720, 52.637198 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "164", "RELIGION": "Anglican", "NAME": "St Silas", "LOCATION": "Warren Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.148329, 52.637470 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "165", "RELIGION": "Mission", "NAME": "", "LOCATION": "Sarah Street (latterly Bath Lane)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.143579, 52.636436 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "166", "RELIGION": "Mission", "NAME": "", "LOCATION": "Noble Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.147597, 52.634848 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "167", "RELIGION": "Living God's Church", "NAME": "", "LOCATION": "18A Halford Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.130682, 52.634680 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "168", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Bath Street, Belgrave", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122683, 52.660835 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "168B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Bath Street, Belgrave", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122695, 52.660822 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "168C", "RELIGION": "Mission", "NAME": "", "LOCATION": "Bath Street, Belgrave", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122705, 52.660811 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "169", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Loughborough Road, Belgrave", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123346, 52.659948 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "17", "RELIGION": "Mission", "NAME": "", "LOCATION": "47 Northgate Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.142026, 52.640360 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "170", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "Checketts Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.120515, 52.658414 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "171", "RELIGION": "Anglican", "NAME": "St Peter", "LOCATION": "Church Road, Belgrave", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.124762, 52.658903 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "172", "RELIGION": "Union Churches", "NAME": "Belgrave Union Church", "LOCATION": "Elmdale Street (Loughborough Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.122813, 52.657261 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "173", "RELIGION": "Union Churches", "NAME": "Belgrave Union Church", "LOCATION": "Loughborough Road (Vann Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122655, 52.656368 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "174", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Harrison Road (Gipsy Lane corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113048, 52.656102 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "175", "RELIGION": "Baptist", "NAME": "Carey Hall", "LOCATION": "Harrison Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115025, 52.653564 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "175B", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "Harrison Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.115040, 52.653529 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "176", "RELIGION": "Mission", "NAME": "", "LOCATION": "Ratcliffe Street, Belgrave", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.120657, 52.653605 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "177", "RELIGION": "Anglican", "NAME": "St Michael & All Angels", "LOCATION": "Melton Road, Belgrave", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.119633, 52.652933 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "178", "RELIGION": "Mission", "NAME": "St Alban's Mission Room", "LOCATION": "Bardolph Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.116837, 52.648082 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "179", "RELIGION": "Methodist", "NAME": "Belgrave Hall", "LOCATION": "Belgrave Road (Rothley Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.123104, 52.648553 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "18", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Northgate Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141461, 52.640241 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "180", "RELIGION": "Spiritualist", "NAME": "Christian Spiritualist Church", "LOCATION": "Marjorie Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128945, 52.649849 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "181", "RELIGION": "Anglican", "NAME": "St Faith", "LOCATION": "Brandon Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.121642, 52.648332 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "182", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Catherine Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.116510, 52.646831 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "183", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "Argyle Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.119267, 52.646852 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "184", "RELIGION": "Mission", "NAME": "", "LOCATION": "Oak Street (above Co-operative)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.109979, 52.642044 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "185", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Belgrave Road (latterly Belgrave Gate, Syston Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125934, 52.644946 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "186", "RELIGION": "Mission", "NAME": "Bede's Mission Church", "LOCATION": "Humberstone Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.110750, 52.641622 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "187", "RELIGION": "Mission", "NAME": "", "LOCATION": "Belgrave Gate", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128121, 52.644070 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "188", "RELIGION": "Mission", "NAME": "", "LOCATION": "Davis Street (latterly St Saviours Road, Humberstone Road corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.111469, 52.640878 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "189", "RELIGION": "Baptist", "NAME": "Carley Evangelical Baptist Church", "LOCATION": "Wharf Street North", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126413, 52.641257 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "19", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Burgess Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138633, 52.639695 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "190", "RELIGION": "Anglican", "NAME": "St Matthew's House", "LOCATION": "Kanloops Crescent", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.124403, 52.640954 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "191", "RELIGION": "Church of God", "NAME": "", "LOCATION": "St Saviours Road, Broomfield Hall", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.110949, 52.640446 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "192", "RELIGION": "Mission", "NAME": "", "LOCATION": "St Saviours Road (formerly Davis Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.110609, 52.639872 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "193", "RELIGION": "Mission", "NAME": "", "LOCATION": "Grove Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.111996, 52.638027 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "194", "RELIGION": "Spiritualist", "NAME": "Progressive Spiritualist Church", "LOCATION": "Lee Circle (St James Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.128741, 52.637399 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "195", "RELIGION": "Hindu", "NAME": "Shree Mandata Samaj Sahayak Mandal", "LOCATION": "1 Hartington Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113345, 52.636556 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "195B", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "Melbourne Road (Hartington Road corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113326, 52.636521 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "196", "RELIGION": "Methodist", "NAME": "Wesley Hall", "LOCATION": "Hartington Road (Mere Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.109506, 52.636417 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "197", "RELIGION": "Salvation Army", "NAME": "Park Hall", "LOCATION": "130 Berners Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.111365, 52.634433 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "198", "RELIGION": "Anglican", "NAME": "St Theodore of Canterbury", "LOCATION": "Nicklaus Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.098486, 52.668681 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "199", "RELIGION": "Methodist", "NAME": "Claremont Methodist Church \/ Belgrave Primitive Methodist Church", "LOCATION": "Claremont Street, Belgrave", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.121875, 52.660458 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "2", "RELIGION": "Medieval church (destroyed)", "NAME": "St Leonard", "LOCATION": "Woodgate (Abbey Gate corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.144316, 52.643630 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "20", "RELIGION": "Congregational", "NAME": "", "LOCATION": "54 Sanvey Gate", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.139166, 52.639665 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "200", "RELIGION": "Mission", "NAME": "", "LOCATION": "Justice Street (latterly Bellholme Close)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.120133, 52.659225 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "201", "RELIGION": "Catholic", "NAME": "Our Lady of Good Counsel", "LOCATION": "Gleneagles Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.105478, 52.661363 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "202", "RELIGION": "Hindu", "NAME": "Shree Shakti Mandir", "LOCATION": "Moira Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117129, 52.652039 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "202B", "RELIGION": "Catholic", "NAME": "Our Lady of Good Counsel \/ Our Lady of Good Counsel & St Patrick", "LOCATION": "Moira Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.117107, 52.652064 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "203", "RELIGION": "Anglican", "NAME": "St Alban", "LOCATION": "Harrison Road (Surrey Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.118305, 52.648657 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "204", "RELIGION": "Anglican", "NAME": "St Gabriel", "LOCATION": "Kerrysdale Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.103701, 52.654693 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "205", "RELIGION": "Hindu", "NAME": "Shree Sanatan Mandir", "LOCATION": "60\/84 Weymouth Street (Catherine Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115298, 52.647876 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "206", "RELIGION": "Anglican", "NAME": "St Gabriel the Archangel", "LOCATION": "Gipsy Lane (Edgehill Road corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.098028, 52.652729 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "207", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Edgehill Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.096803, 52.653511 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "208", "RELIGION": "Muslim", "NAME": "Northfields Education Centre", "LOCATION": "8 Essex Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.095345, 52.652513 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "208B", "RELIGION": "Church of God", "NAME": "", "LOCATION": "Essex Road, Northfield Hall", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.095417, 52.652533 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "209", "RELIGION": "Mission", "NAME": "St Alban's Mission Church", "LOCATION": "Martin Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.109197, 52.645856 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "21", "RELIGION": "Mission", "NAME": "Town Mission Preaching Room", "LOCATION": "79A Sanvey Gate", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.140550, 52.639623 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "210", "RELIGION": "Mission", "NAME": "West Humberstone Gospel Mission", "LOCATION": "Brighton Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.097925, 52.646006 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "211", "RELIGION": "Methodist", "NAME": "New Humberstone Wesleyan Chapel", "LOCATION": "Victoria Road East (formerly Victoria Road)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.098313, 52.644568 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "212", "RELIGION": "Mission", "NAME": "", "LOCATION": "Morton Road (latterly Overton Road)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.101355, 52.643339 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "213", "RELIGION": "Baptist", "NAME": "New Humberstone Baptist Mission", "LOCATION": "Overton Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.102066, 52.642847 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "214", "RELIGION": "Baptist", "NAME": "", "LOCATION": "78 Uppingham Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.099625, 52.642375 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "215", "RELIGION": "True Jesus Church", "NAME": "", "LOCATION": "Humberstone Road (Parry Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.107868, 52.641768 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "215B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Humberstone Road (Parry Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.107817, 52.641772 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "216", "RELIGION": "Anglican", "NAME": "St Barnabas", "LOCATION": "St Barnabas Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.097382, 52.641349 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "217", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Humberstone Road (Newby Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.109642, 52.641299 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "218", "RELIGION": "United Reformed Church", "NAME": "Emmanuel United Reformed Church \/ Charnwood United Reformed Church", "LOCATION": "Spinney Hill Road (Mere Road, Green Lane Road corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.108201, 52.640050 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "219", "RELIGION": "Mission", "NAME": "", "LOCATION": "Mere Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.107102, 52.639282 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "22", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Soar Lane (north side)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141920, 52.639129 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "220", "RELIGION": "Catholic", "NAME": "Sacred Heart and St Margaret Mary", "LOCATION": "Mere Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.107665, 52.638980 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "221", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Leicester Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.101531, 52.637280 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "222", "RELIGION": "Mission", "NAME": "", "LOCATION": "Asfordby Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.104910, 52.637496 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "223", "RELIGION": "Anglican", "NAME": "St Saviour", "LOCATION": "St Saviour's Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.109120, 52.638134 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "224", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Rolleston Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.104172, 52.636569 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "225", "RELIGION": "Methodist", "NAME": "", "LOCATION": "New Parks, Battersbee Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.180208, 52.647151 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "226", "RELIGION": "Anglican", "NAME": "St Aidan", "LOCATION": "New Parks Boulevard", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.179504, 52.645958 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "227", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Aikman Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.178329, 52.646369 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "228", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "Knowles Road, New Parks", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.182837, 52.644128 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "229", "RELIGION": "Catholic", "NAME": "Mother of God", "LOCATION": "New Parks Boulevard", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.182338, 52.642429 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "22B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Soar Lane (north side)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141959, 52.639117 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "23", "RELIGION": "Mission", "NAME": "", "LOCATION": "Soar Lane (south side)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141710, 52.638984 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "230", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "Glenfield Road (Gimson Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.162426, 52.636040 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "231", "RELIGION": "Anglican", "NAME": "St Anne", "LOCATION": "Letchworth Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.169224, 52.635263 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "232", "RELIGION": "Church of Christ", "NAME": "Braunstone United Reformed Church", "LOCATION": "Gooding Avenue (Hamelin Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.179071, 52.630522 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "233", "RELIGION": "Mission", "NAME": "St Boniface", "LOCATION": "Winforde Crescent", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.193083, 52.629590 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "234", "RELIGION": "Shiloh Pentecostal Fellowship", "NAME": "", "LOCATION": "Westfield Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.168440, 52.635712 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "234B", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "Westfield Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.168329, 52.635687 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "235", "RELIGION": "Evangelical Free Church", "NAME": "Braunstone Evangelical Free Church", "LOCATION": "Didsbury Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.183475, 52.626105 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "236", "RELIGION": "Anglican", "NAME": "St Oswald", "LOCATION": "Rancliffe Crescent, Braunstone", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.171199, 52.628241 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "237", "RELIGION": "Catholic", "NAME": "Most Blessed Sacrament", "LOCATION": "Gooding Avenue, Braunstone", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.173351, 52.626115 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "238", "RELIGION": "Anglican", "NAME": "St Peter", "LOCATION": "Woodshaw Rise, Braunstone", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.181277, 52.620876 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "239", "RELIGION": "Baptist", "NAME": "Friar Lane & Braunstone Baptist Church", "LOCATION": "Braunstone Avenue \/ Hallam Crescent East", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.175042, 52.618763 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "24", "RELIGION": "Society of Friends (Quakers)", "NAME": "Northgate Lane Meeting House", "LOCATION": "Northgate Lane (formerly Deadman's Lane, Friar's Road, Sycamore Lane)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141404, 52.638881 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "240", "RELIGION": "Methodist", "NAME": "Trinity Methodist Church", "LOCATION": "Narborough Road (Hallam Crescent East corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.160959, 52.617774 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "241", "RELIGION": "Methodist", "NAME": "St Andrews Methodist Church", "LOCATION": "King Richard's Road (latterly Glenfield Road East)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.152079, 52.634395 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "242", "RELIGION": "Anglican", "NAME": "St Paul", "LOCATION": "Kirby Road \/ Glenfield Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.153216, 52.634546 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "243", "RELIGION": "Mission", "NAME": "Star Hall", "LOCATION": "3 Henton Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.156299, 52.634952 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "244", "RELIGION": "Catholic", "NAME": "St Peter", "LOCATION": "Hinckley Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.148659, 52.631430 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "245", "RELIGION": "Brethren", "NAME": "Brethren's Meeting Room", "LOCATION": "Mostyn Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.160709, 52.633515 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "246", "RELIGION": "Congregational", "NAME": "Westcotes United Reformed Church \/ Westcotes Congregational Church", "LOCATION": "Hinckley Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.157620, 52.632697 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "247", "RELIGION": "Ukrainian Catholic Church", "NAME": "", "LOCATION": "Hinckley Road (Fosse Road South corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.152426, 52.631640 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "247B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Hinckley Road (Fosse Road South corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.152387, 52.631611 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "248", "RELIGION": "Elim Church", "NAME": "Elim Pentecostal Church", "LOCATION": "Ruding Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.147614, 52.630325 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "248B", "RELIGION": "Mission", "NAME": "Westcotes Mission Room", "LOCATION": "Narborough Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.147567, 52.630298 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "249", "RELIGION": "Anglican", "NAME": "Church of the Martyrs", "LOCATION": "Westcotes Drive", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.150827, 52.628924 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "25", "RELIGION": "Mission", "NAME": "", "LOCATION": "176 Highcross Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141026, 52.638683 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "250", "RELIGION": "Elim Church", "NAME": "Elim Pentecostal Church", "LOCATION": "Narborough Road (Harrow Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.150081, 52.628107 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "250B", "RELIGION": "Unitarian", "NAME": "Free Christian Church", "LOCATION": "Narborough Road (Harrow Road corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.150098, 52.628078 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "251", "RELIGION": "Brethren", "NAME": "Evangelical Christian Brethren", "LOCATION": "Braunstone Avenue Hall (Wyngate Drive corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.160498, 52.627949 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "252", "RELIGION": "Baptist", "NAME": "Robert Hall Memorial Baptist Church", "LOCATION": "Narborough Road (Upperton Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.152156, 52.625873 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "253", "RELIGION": "Christian Scientists", "NAME": "Christian Science Society", "LOCATION": "35 Westleigh Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.155384, 52.625265 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "254", "RELIGION": "Christadelphian", "NAME": "Christadelphian Hall", "LOCATION": "Westleigh Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.155701, 52.624878 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "255", "RELIGION": "Church of God of Prophecy", "NAME": "", "LOCATION": "249 Fosse Road South", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.156801, 52.624157 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "255B", "RELIGION": "Christian Scientists", "NAME": "Christian Science Society", "LOCATION": "249 Fosse Road South", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.156742, 52.624204 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "255C", "RELIGION": "Mission", "NAME": "", "LOCATION": "249 Fosse Road South", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.156775, 52.624180 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "256", "RELIGION": "Anglican", "NAME": "Holy Apostles", "LOCATION": "Fosse Road South", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.157401, 52.623243 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "257", "RELIGION": "Congregational", "NAME": "Christ Church United Reformed Church", "LOCATION": "Dumbleton Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.158947, 52.615319 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "258", "RELIGION": "Mission", "NAME": "", "LOCATION": "109 Highcross Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.141173, 52.638843 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "259", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "Andrewes Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.148361, 52.633702 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "26", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Vine Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138827, 52.638360 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "260", "RELIGION": "Mission", "NAME": "", "LOCATION": "King Richard's Road (Coventry Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.146187, 52.633936 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "261", "RELIGION": "Catholic", "NAME": "St Peter", "LOCATION": "Leamington Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.145252, 52.633751 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "262", "RELIGION": "Union Churches", "NAME": "Emmanuel Baptist Church \/ Emmanuel Union Church", "LOCATION": "New Park Street \/ Leamington Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.147091, 52.632658 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "263", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "76 High Street (above Halfords)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.137184, 52.635441 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "264", "RELIGION": "Spiritualist", "NAME": "Progressive Spiritualist Church", "LOCATION": "Fox Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.132016, 52.635831 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "265", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Braunstone Gate (Thorpe Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.144819, 52.631892 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "265B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Braunstone Gate (Thorpe Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.144840, 52.631849 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "266", "RELIGION": "Elim Church", "NAME": "Elim Foursquare Gospel Church", "LOCATION": "3 New Walk", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.131472, 52.630910 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "267", "RELIGION": "Mission", "NAME": "", "LOCATION": "Jarrom Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135695, 52.628876 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "268", "RELIGION": "Anglican", "NAME": "St Andrew", "LOCATION": "Jarrom Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.137575, 52.628193 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "269", "RELIGION": "Mission", "NAME": "", "LOCATION": "Mowbray Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135662, 52.628102 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "26B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Vine Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138818, 52.638344 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "27", "RELIGION": "Anglican", "NAME": "All Saints", "LOCATION": "Highcross Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.140308, 52.638199 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "270", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Crown Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136254, 52.627779 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "271", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Albert Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135677, 52.627300 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "271B", "RELIGION": "Mission", "NAME": "", "LOCATION": "Albert Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135635, 52.627288 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "272", "RELIGION": "Mission", "NAME": "", "LOCATION": "New Bridge Street (Knighton Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135160, 52.626255 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "273", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Aylestone Road (Chestnut Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134013, 52.624998 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "274", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Jarrom Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.140276, 52.627006 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "275", "RELIGION": "Greek Orthodox", "NAME": "The Greek Orthodox Cathedral of St Nicholas & St Xenophon", "LOCATION": "Aylestone Road (Sawday Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.135402, 52.622866 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "275B", "RELIGION": "Anglican", "NAME": "All Souls", "LOCATION": "Aylestone Road (Sawday Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.135419, 52.622791 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "276", "RELIGION": "Church of Christ", "NAME": "", "LOCATION": "Walnut Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.140174, 52.624745 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "277", "RELIGION": "Methodist", "NAME": "Ecumenical Church of the Nativity \/ Aylestone Park Methodist Church", "LOCATION": "Cavendish Road, Aylestone Park", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.140455, 52.612561 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "278", "RELIGION": "Muslim", "NAME": "Masjid Al Farooq", "LOCATION": "Melbourne Road (Berners Street corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.114073, 52.634348 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "278B", "RELIGION": "Anglican", "NAME": "St Hilda", "LOCATION": "Melbourne Road (Berners Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.113656, 52.634313 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "279", "RELIGION": "New Testament Church of God", "NAME": "", "LOCATION": "Melbourne Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113636, 52.631555 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "279B", "RELIGION": "Methodist", "NAME": "Highfields Chapel", "LOCATION": "Melbourne Road (formerly Clipstone Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113635, 52.631518 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "28", "RELIGION": "Mission", "NAME": "Unitarian Domestic Mission \/ Gospel (Great Central) Mission Hall", "LOCATION": "East Bond Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.141074, 52.638026 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "280", "RELIGION": "Universal Pentecostal Church", "NAME": "", "LOCATION": "Evington Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117700, 52.630419 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "281", "RELIGION": "Jewish \/ Hebrew Congregation", "NAME": "Leicester Hebrew Congregation", "LOCATION": "Highfield Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.118079, 52.628618 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "282", "RELIGION": "Assemblies of God", "NAME": "New Trinity Church", "LOCATION": "Upper Tichborne Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117515, 52.628287 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "283", "RELIGION": "Spiritualist", "NAME": "Sanctuary of Light Christian Spiritualist Church", "LOCATION": "73 London Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.122776, 52.629054 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "284", "RELIGION": "Presbyterian", "NAME": "St Stephen's United Reformed Church \/ St Stephen's United Presbyterian Church", "LOCATION": "De Montfort Street (New Walk corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.124422, 52.628258 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "285", "RELIGION": "Seventh Day Adventist Church", "NAME": "", "LOCATION": "London Road (University Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.120824, 52.627673 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "285B", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Victoria Road (later named University Road)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.120859, 52.627629 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "286", "RELIGION": "Independent Holiness Movement", "NAME": "Thanksgiving Hall", "LOCATION": "151 London Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.119304, 52.626745 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "287", "RELIGION": "Christian Scientists", "NAME": "First Church of Christ Scientists", "LOCATION": "11 Granville Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.119970, 52.625679 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "288", "RELIGION": "Catholic", "NAME": "St Anne (The Society of Pious X)", "LOCATION": "Abingdon Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.114840, 52.625895 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "288B", "RELIGION": "Christadelphian", "NAME": "Christadelphian Hall", "LOCATION": "Abingdon Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.114883, 52.625903 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "289", "RELIGION": "Christian Scientists", "NAME": "First Church of Christ Scientists", "LOCATION": "22 Knighton Park Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.116501, 52.620337 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "29", "RELIGION": "Unitarian", "NAME": "Great Meeting Chapel", "LOCATION": "Bond Street (latterly East Bond Street)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.135977, 52.637790 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "290", "RELIGION": "Society of Friends (Quakers)", "NAME": "", "LOCATION": "16 Queens Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117357, 52.619887 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "291", "RELIGION": "Anglican", "NAME": "St John the Baptist", "LOCATION": "Clarendon Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.111564, 52.618112 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "292", "RELIGION": "Methodist", "NAME": "Christchurch, Clarendon Park", "LOCATION": "Clarendon Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115658, 52.617375 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "293", "RELIGION": "Chinese Christian Church", "NAME": "", "LOCATION": "Clarendon Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115101, 52.617284 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "293B", "RELIGION": "Baptist", "NAME": "Knighton Public Hall Church", "LOCATION": "Clarendon Park Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.115070, 52.617239 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "294", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Queens Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.116756, 52.616535 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "294B", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Queens Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.116711, 52.616546 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "295", "RELIGION": "Sikh", "NAME": "Guru Amar Das Gurdwara", "LOCATION": "219-227 Clarendon Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.120352, 52.615501 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "295B", "RELIGION": "Baptist", "NAME": "Clarendon Hall \/ Clarendon Park Baptist Church", "LOCATION": "Clarendon Park Road (Lytton Road corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.120405, 52.615535 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "296", "RELIGION": "Mission", "NAME": "", "LOCATION": "Lorne Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.121059, 52.615233 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "297", "RELIGION": "Jewish \/ Hebrew Congregation", "NAME": "Leicester Progressive Jewish Congregation", "LOCATION": "Avenue Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.112778, 52.616373 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "298", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Chapel Lane, Knighton", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.117240, 52.608278 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "299", "RELIGION": "Evangelical Free Church", "NAME": "Knighton Evangelical Free Church", "LOCATION": "Brinsmead Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.116487, 52.606458 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "3", "RELIGION": "Medieval church (destroyed)", "NAME": "St Clement", "LOCATION": "South of Soar Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.143002, 52.637411 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "30", "RELIGION": "Free Gospel", "NAME": "Free Gospel Hall", "LOCATION": "Causeway Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137214, 52.637499 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "300", "RELIGION": "Anglican", "NAME": "St Mary Magdalene", "LOCATION": "Church Lane, Knighton", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115784, 52.605494 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "301", "RELIGION": "Anglican", "NAME": "St Stephen", "LOCATION": "East Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.103151, 52.634840 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "302", "RELIGION": "Muslim", "NAME": "Masjid Al Farooq", "LOCATION": "Melbourne Road (Dale Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113460, 52.633539 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "302B", "RELIGION": "Methodist", "NAME": "St Pauls", "LOCATION": "Melbourne Road (Dale Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113516, 52.633545 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "302C", "RELIGION": "Polish Roman Catholic", "NAME": "St Pauls", "LOCATION": "Melbourne Road (Dale Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113568, 52.633551 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "303", "RELIGION": "Bible Hall Fellowship", "NAME": "", "LOCATION": "Mere Road (Donnington Street Corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.111148, 52.631551 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "303B", "RELIGION": "Mission", "NAME": "", "LOCATION": "Mere Road (Donnington Street Corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.111217, 52.631557 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "304", "RELIGION": "Baptist", "NAME": "North Evington United Free Church \/ Baptist North Evington Free Church", "LOCATION": "Linden Street \/ Gedding Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.098331, 52.631789 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "305", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "324 East Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.106450, 52.631210 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "306", "RELIGION": "Mission", "NAME": "Wycliffe Hall", "LOCATION": "Gwendolen Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.099517, 52.630913 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "307", "RELIGION": "Anglican", "NAME": "St Thomas", "LOCATION": "East Park Road (Chesterfield Road corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.106585, 52.629361 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "308", "RELIGION": "Christadelphian", "NAME": "Victoria Hall", "LOCATION": "Mill Hill Lane", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.118909, 52.627399 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "308B", "RELIGION": "Swedenborgians", "NAME": "Victoria Hall", "LOCATION": "Mill Hill Lane", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.118873, 52.627376 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "309", "RELIGION": "Mission", "NAME": "", "LOCATION": "Dore Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.108428, 52.627304 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "30B", "RELIGION": "Spiritualist", "NAME": "National Spiritualist Church \/ Leicester Spiritualist Society", "LOCATION": "Causeway Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137248, 52.637496 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "31", "RELIGION": "Mission", "NAME": "", "LOCATION": "Vauxhall Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137091, 52.637198 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "310", "RELIGION": "Methodist", "NAME": "Mayflower Methodist Church", "LOCATION": "Ethel Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.092730, 52.626054 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "311", "RELIGION": "Church of Christ", "NAME": "Evington Road United Reformed Church", "LOCATION": "Evington Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.109707, 52.625817 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "312", "RELIGION": "Anglican", "NAME": "St Philip", "LOCATION": "Evington Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.102790, 52.623964 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "313", "RELIGION": "Wesleyan Holiness Church", "NAME": "", "LOCATION": "61 Bodnant Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.096684, 52.622375 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "313B", "RELIGION": "Church of Christ", "NAME": "Homeway Church of Christ", "LOCATION": "61 Bodnant Avenue", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.096740, 52.622336 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "313C", "RELIGION": "Seventh Day Adventist Church", "NAME": "", "LOCATION": "61 Bodnant Avenue", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.096667, 52.622322 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "314", "RELIGION": "Anglican", "NAME": "St James the Greater", "LOCATION": "London Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.114788, 52.624100 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "315", "RELIGION": "Congregational", "NAME": "London Road United Church \/ Clarendon Park Congregational Church", "LOCATION": "Londone Road, Stoneygate", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.110212, 52.618203 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "316", "RELIGION": "Jesus Army", "NAME": "Jesus Fellowship Church", "LOCATION": "2 Springfield Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.110613, 52.617851 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "317", "RELIGION": "Baptist", "NAME": "Stoneygate Baptist Church \/ London Road United Church", "LOCATION": "London Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.105458, 52.614864 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "318", "RELIGION": "Catholic", "NAME": "St Thomas More", "LOCATION": "Knighton Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.112096, 52.611704 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "319", "RELIGION": "Anglican", "NAME": "St Guthlac", "LOCATION": "Holbrook Road, Knighton", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.099681, 52.607464 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "32", "RELIGION": "Methodist", "NAME": "Friars Chapel", "LOCATION": "Alexander Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.142619, 52.636996 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "320", "RELIGION": "Church of Christ", "NAME": "Laburnum Road United Reformed Church", "LOCATION": "Laburnum Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.065211, 52.649035 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "321", "RELIGION": "Catholic", "NAME": "Our Lady of the Rosary", "LOCATION": "Armadale Drive, Netherhall", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.060515, 52.648251 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "322", "RELIGION": "Anglican", "NAME": "St Elizabeth", "LOCATION": "Austin Rise, Netherhall Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.061862, 52.648254 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "323", "RELIGION": "Anglican", "NAME": "St Mary", "LOCATION": "Lidster Close, Humberstone", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.075679, 52.647941 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "324", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Main Street, Humberstone", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.078768, 52.647552 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "324B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Main Street, Humberstone", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.078814, 52.647521 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "325", "RELIGION": "Congregational", "NAME": "Abbotts Road United Reformed Church \/ Humberstone Congregational Church", "LOCATION": "Abbots Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.069447, 52.644428 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "326", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Uppingham Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.089415, 52.642287 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "327", "RELIGION": "Anglican", "NAME": "Christ Church", "LOCATION": "Thurncourt Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.058976, 52.638794 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "328", "RELIGION": "Catholic", "NAME": "St Joseph", "LOCATION": "Uppingham Road (Goodwood Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.072772, 52.637062 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "329", "RELIGION": "Anglican", "NAME": "St Chad", "LOCATION": "Coleman Road \/ Broad Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.088725, 52.634853 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "33", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Bond Street (latterly East Bond Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136083, 52.637162 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "330", "RELIGION": "Brethren", "NAME": "Goodwood Evangelical Church", "LOCATION": "Goodwood Road (Gamel Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.073857, 52.632089 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "331", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "Wakerley Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.087324, 52.627608 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "332", "RELIGION": "Polish Roman Catholic", "NAME": "St Pauls (St Pawla)", "LOCATION": "Wakerley Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.087739, 52.626671 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "332B", "RELIGION": "Catholic", "NAME": "St Margaret", "LOCATION": "Wakerley Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.087599, 52.626662 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "333", "RELIGION": "Church of God", "NAME": "", "LOCATION": "Downing Drive", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.065438, 52.625037 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "334", "RELIGION": "Congregational", "NAME": "Wycliffe United Reformed Church \/ Wycliffe Congregational Church", "LOCATION": "The Common, Evington", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.078933, 52.621550 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "335", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Main Street, Evington", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.074561, 52.621025 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "336", "RELIGION": "Anglican", "NAME": "St Denys", "LOCATION": "Church Road, Evington", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.074400, 52.619039 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "337", "RELIGION": "Anglican", "NAME": "St Michael & All Angels", "LOCATION": "Scott Street, Knighton", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127254, 52.610900 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "338", "RELIGION": "Jehovah's Witnesses", "NAME": "", "LOCATION": "Lothair Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.139410, 52.613095 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "339", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Lansdowne Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138386, 52.611125 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "34", "RELIGION": "Baptist", "NAME": "Ebenezer Chapel", "LOCATION": "St Peter's Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137788, 52.636904 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "340", "RELIGION": "Anglican", "NAME": "St James the Lesser", "LOCATION": "Lansdowne Road, Aylestone Park", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.140744, 52.610428 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "341", "RELIGION": "Baptist", "NAME": "Zion Chapel, Particular Baptists", "LOCATION": "Park Hill Drive", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.145520, 52.608923 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "342", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "37 Knighton Lane", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.139481, 52.609770 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "343", "RELIGION": "Muslim", "NAME": "", "LOCATION": "22 Vernon Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.138836, 52.609498 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "343B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Vernon Road, Aylestone Park", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.138897, 52.609510 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "344", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "345 Salvation Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138164, 52.607491 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "345", "RELIGION": "Catholic", "NAME": "St Edward the Confessor", "LOCATION": "Aylestone Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.151331, 52.605803 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "346", "RELIGION": "Anglican", "NAME": "St Andrew", "LOCATION": "Old Church Street, Aylestone", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.157138, 52.603941 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "347", "RELIGION": "Apostolic Church", "NAME": "New Life Centre", "LOCATION": "Sanvey Lane, Aylestone", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.157441, 52.602471 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "347B", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Sanvey Lane, Aylestone", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.157532, 52.602507 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "348", "RELIGION": "Baptist", "NAME": "Aylestone Baptist Church", "LOCATION": "Lutterworth Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.156643, 52.600995 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "349", "RELIGION": "Anglican", "NAME": "St Christopher", "LOCATION": "Broughton Road \/ Marriott Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.140463, 52.597874 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "35", "RELIGION": "Calvinist Independent", "NAME": "Salem Chapel", "LOCATION": "Freeschool Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136659, 52.636489 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "350", "RELIGION": "Methodist", "NAME": "Southfields Hall", "LOCATION": "Southfields Drive", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136500, 52.596739 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "351", "RELIGION": "Christadelphian", "NAME": "Christadelphian Hall", "LOCATION": "Glenhills Boulevard", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.143095, 52.596776 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "352", "RELIGION": "Church of Christ", "NAME": "Saffron Lane United Reformed Church", "LOCATION": "Saffron Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.142005, 52.596462 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "353", "RELIGION": "Christ Gospel Church", "NAME": "", "LOCATION": "Stonesby Avenue", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.134636, 52.594229 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "353B", "RELIGION": "Catholic", "NAME": "St John Bosco", "LOCATION": "Stonesby Avenue", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.134691, 52.594170 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "354", "RELIGION": "Anglican", "NAME": "St Christopher", "LOCATION": "Trenant Road (Samworth Enterprise Academy)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.138327, 52.593272 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "355", "RELIGION": "Catholic", "NAME": "St John Bosco", "LOCATION": "Parsley Road, Eyres Monsell", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.146434, 52.591470 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "356", "RELIGION": "Anglican", "NAME": "St Hugh", "LOCATION": "Sturdee Road, Eyres Monsell", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.147463, 52.590882 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "357", "RELIGION": "Hindu", "NAME": "Shree Brahma Samaj", "LOCATION": "15 Belgrave Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.124558, 52.647455 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "358", "RELIGION": "Hindu", "NAME": "", "LOCATION": "8 Catherine Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.119031, 52.645878 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "359", "RELIGION": "Hindu", "NAME": "Shree Geeta Bhavan Mandir", "LOCATION": "70 Clarendon Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.116067, 52.617024 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "36", "RELIGION": "Baptist", "NAME": "Tabernacle", "LOCATION": "Belgrave Road (Melton Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127520, 52.643120 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "360", "RELIGION": "Hindu", "NAME": "Radha Krishna Temple Shyama Ashram", "LOCATION": "47 Cromford Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.111543, 52.635489 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "360B", "RELIGION": "Hindu", "NAME": "Shree Hindu Temple", "LOCATION": "47 Crawford Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.111582, 52.635492 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "361", "RELIGION": "Hindu", "NAME": "Swaminarayan Hindu Mission", "LOCATION": "148 Doncaster Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113403, 52.649351 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "362", "RELIGION": "Hindu", "NAME": "Jai Maadi Temple", "LOCATION": "26\/28 Hart Road", "INUSE": "Unknown" }, "geometry": { "type": "Point", "coordinates": [ -1.113522, 52.637497 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "363", "RELIGION": "Hindu", "NAME": "Shree Ram Mandir", "LOCATION": "Ross Walk, Hildyard Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126506, 52.649973 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "364", "RELIGION": "Hindu", "NAME": "Haveli Shreeji Dwar", "LOCATION": "58 Loughborough Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.122683, 52.652604 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "365", "RELIGION": "Hindu", "NAME": "Shree Swaminarayan Temple", "LOCATION": "139\/141 Loughborough Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.121789, 52.657028 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "366", "RELIGION": "Hindu", "NAME": "Shree Jalaram prayer room", "LOCATION": "197 Mere Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.110705, 52.630929 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "367", "RELIGION": "Hindu", "NAME": "Shree Jalaram Prarthana Mandal", "LOCATION": "71 Narborough Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.149044, 52.629162 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "368", "RELIGION": "Hindu", "NAME": "Shree Jalaram Prarthana Mandal", "LOCATION": "85 Narborough Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.149501, 52.628610 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "369", "RELIGION": "Hindu", "NAME": "Shree Wanza", "LOCATION": "31 Pasture Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.138782, 52.641170 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "37", "RELIGION": "Methodist", "NAME": "Bethel Chapel", "LOCATION": "Foundry Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.129127, 52.643110 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "370", "RELIGION": "Hindu", "NAME": "Maher Community Centre", "LOCATION": "15 Ravensbridge Drive", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.142690, 52.645907 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "371", "RELIGION": "Hindu", "NAME": "Shri Murugan Temple", "LOCATION": "Unit 3A, Ross Walk", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126796, 52.647184 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "372", "RELIGION": "Hindu", "NAME": "Shree UK Rohit Kshatriya Seva Samaj", "LOCATION": "33 Rowsley Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.107660, 52.626174 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "373", "RELIGION": "Hindu", "NAME": "Shree Hindu Temple", "LOCATION": "34 St Barnabas Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.097898, 52.640673 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "374", "RELIGION": "Hindu", "NAME": "Swaminarayan Hindu Mission", "LOCATION": "3 St James Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.128312, 52.637396 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "375", "RELIGION": "Hindu", "NAME": "Haveli Shreeji Dwar", "LOCATION": "40 St Peter's Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.113446, 52.629568 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "376", "RELIGION": "Hindu", "NAME": "Charotar Patidar Samaj", "LOCATION": "20 South Church Gate", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.137342, 52.640936 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "377", "RELIGION": "Hindu", "NAME": "Hare Krishna Temple (ISKCon)", "LOCATION": "21 Thoresby Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.093347, 52.635828 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "378", "RELIGION": "Hindu", "NAME": "Shree Prajapati", "LOCATION": "Ulverscroft Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117115, 52.646316 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "379", "RELIGION": "Hindu", "NAME": "Mandir Baba Balak Nath", "LOCATION": "1 Uppingham Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.104302, 52.642063 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "37B", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Foundry Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.129112, 52.643096 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "38", "RELIGION": "Anglican", "NAME": "St Mark", "LOCATION": "Belgrave Gate", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.128466, 52.642741 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "380", "RELIGION": "Hindu", "NAME": "Shree Darji Gnati Mandal", "LOCATION": "Vicarage Lane, Belgrave", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.124118, 52.658304 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "381", "RELIGION": "Sikh", "NAME": "Gurdwara Gur Panth Parkash", "LOCATION": "19 Ashford Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126136, 52.614942 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "382", "RELIGION": "Sikh", "NAME": "Guru Tegbahadar Gurdwara", "LOCATION": "23 East Park Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.101234, 52.637135 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "383", "RELIGION": "Sikh", "NAME": "Guru Tegbahadar Gurdwara", "LOCATION": "106 East Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.101532, 52.636663 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "384", "RELIGION": "Sikh", "NAME": "Gurdwara Shri Guru Dashmesh Sahib", "LOCATION": "49 Gipsy Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.109784, 52.655042 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "385", "RELIGION": "Sikh", "NAME": "Guru Tegbahadar Temple", "LOCATION": "58 Gwendolen Road", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.103111, 52.631267 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "386", "RELIGION": "Sikh", "NAME": "Gurdwara Shri Guru Dashmesh Sahib", "LOCATION": "128 Halkin Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.115841, 52.650530 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "387", "RELIGION": "Sikh", "NAME": "Shri Guru Ravidass Temple", "LOCATION": "193 Harrison Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115909, 52.652823 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "388", "RELIGION": "Sikh", "NAME": "Guru Nanak Gurdwara", "LOCATION": "9 Holy Bones", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.141127, 52.635466 ] }, "image": { "url": "images/locations/388.jpg", "width": 350, "height": 263 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "389", "RELIGION": "Sikh", "NAME": "Sri Nabh Kamal Raja Sahib Sikh Temple", "LOCATION": "208 London Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115220, 52.624071 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "39", "RELIGION": "Mission", "NAME": "", "LOCATION": "Caroline Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130143, 52.642190 ] } }
+			,
+
+			{ "type": "Feature", "properties": { "ID_NO": "390", "RELIGION": "Sikh", "NAME": "Ramgarhia Board Gurdwara", "LOCATION": "51 Meynell Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.102114, 52.640619 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "391", "RELIGION": "Sikh", "NAME": "Guru Nanak Gurdwara", "LOCATION": "5 New Walk", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.132036, 52.631198 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "392", "RELIGION": "Sikh", "NAME": "Ramgarhia Board", "LOCATION": "Ulverscroft Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115569, 52.645214 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "393", "RELIGION": "Muslim", "NAME": "Jam-E-Mosque (King Faisal Mosque)", "LOCATION": "51 Asfordby Street \/ Atkinson Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.105660, 52.637244 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "394", "RELIGION": "Muslim", "NAME": "Masjid-E-Abu Bakar", "LOCATION": "55 Barclay Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.152661, 52.627896 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "395", "RELIGION": "Muslim", "NAME": "Masjid-E-Noor", "LOCATION": "146-150 Berners Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.110122, 52.634192 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "396", "RELIGION": "Muslim", "NAME": "Masjid Al-Huda", "LOCATION": "8 Britannia Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.126897, 52.642650 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "397", "RELIGION": "Muslim", "NAME": "Masjid Quba", "LOCATION": "19 Brunswick Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.121877, 52.638769 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "398", "RELIGION": "Muslim", "NAME": "Jamai-Masjid-E-Bilal", "LOCATION": "Chesterfield Road (Evington Valley Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.101197, 52.627096 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "399", "RELIGION": "Muslim", "NAME": "Leicester Central Mosque", "LOCATION": "Conduit Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.121453, 52.632041 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "4", "RELIGION": "Medieval church (destroyed)", "NAME": "St John at the Town's End", "LOCATION": "Belgrave Road (area south of Abbey Park Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126367, 52.645644 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "40", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Archdeacon Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.131286, 52.641306 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "400", "RELIGION": "Muslim", "NAME": "Masjid Talimul Islam", "LOCATION": "22-28 Cork Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.109789, 52.630869 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "401", "RELIGION": "Muslim", "NAME": "Masjid Al Khaleel (Majlis-E-Ishaat-Ul-Quraan)", "LOCATION": "49 Donnington Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.111671, 52.631435 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "402", "RELIGION": "Muslim", "NAME": "Masjid-Al-Hussayn (MKSI Community)", "LOCATION": "17A Duxbury Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.099591, 52.640820 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "403", "RELIGION": "Muslim", "NAME": "Majlis-E-Dawat-Ul-Haq", "LOCATION": "126\/128 Earl Howe Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.110890, 52.630072 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "404", "RELIGION": "Muslim", "NAME": "Al-Masjid-Furqan", "LOCATION": "298 East Park Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.106311, 52.631470 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "405", "RELIGION": "Muslim", "NAME": "Masjid Umar", "LOCATION": "1\/3 Evington Drive", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.102033, 52.624207 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "406", "RELIGION": "Muslim", "NAME": "Tajdaar-E-Madina", "LOCATION": "1A Garendon Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115879, 52.635786 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "407", "RELIGION": "Muslim", "NAME": "Hamidiye Mosque", "LOCATION": "16 Great Central Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.140921, 52.635980 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "408", "RELIGION": "Muslim", "NAME": "Masjid Ar Rahmaan", "LOCATION": "71 Guthlaxton Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.116408, 52.632281 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "409", "RELIGION": "Muslim", "NAME": "Masjid At-Taqwa", "LOCATION": "1 Harewood Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.105257, 52.641889 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "41", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Belgrave Gate (Navigation Street corner, latterly Burleys Flyover)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.130007, 52.640973 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "410", "RELIGION": "Muslim", "NAME": "Bangladeshi Community Centre", "LOCATION": "44 Highfield Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.117597, 52.628996 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "411", "RELIGION": "Muslim", "NAME": "Masjid Al Falah", "LOCATION": "3-11 Keythorpe Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.115134, 52.635191 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "412", "RELIGION": "Muslim", "NAME": "Usmani Mosque", "LOCATION": "Kitchener Road (St Saviours Road corner)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.099448, 52.633798 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "413", "RELIGION": "Muslim", "NAME": "", "LOCATION": "Linden Street (40 Dorothy Road)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.099301, 52.631808 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "414", "RELIGION": "Muslim", "NAME": "Husseini Mosque", "LOCATION": "127 Loughborough Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.122090, 52.656196 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "415", "RELIGION": "Muslim", "NAME": "Masjid-Ul-Imam-Il-Bukhari", "LOCATION": "159 Loughborough Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.122063, 52.657850 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "416", "RELIGION": "Muslim", "NAME": "Gulzar-E-Madina Mosque", "LOCATION": "Melbourne Road (Melbourne Centre)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113514, 52.632883 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "417", "RELIGION": "Muslim", "NAME": "Masjid Uthman Markazi", "LOCATION": "162 Nedham Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113518, 52.636774 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "418", "RELIGION": "Muslim", "NAME": "Masjid-Baitul-Mukarram", "LOCATION": "22\/24 St Stephens Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.113680, 52.628814 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "419", "RELIGION": "Muslim", "NAME": "Masjid Ali", "LOCATION": "42-52 Smith Dorrien Road", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.094261, 52.639397 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "42", "RELIGION": "Mission", "NAME": "", "LOCATION": "Crane Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134852, 52.640133 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "420", "RELIGION": "Muslim", "NAME": "Masjid Tabuk", "LOCATION": "59 Stoughton Drive North", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.102917, 52.622882 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "421", "RELIGION": "Muslim", "NAME": "The Leicester Mosque", "LOCATION": "2A Sutherland Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.112605, 52.629333 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "422", "RELIGION": "Muslim", "NAME": "Masjid Tayyibah (Taybah)", "LOCATION": "6 Sylvan Avenue", "INUSE": "Unknown" }, "geometry": { "type": "Point", "coordinates": [ -1.106520, 52.638215 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "423", "RELIGION": "Muslim", "NAME": "Dar-Us-Salem Mosque", "LOCATION": "55\/57 Upper Tichborne Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.116950, 52.628167 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "424", "RELIGION": "Buddhist", "NAME": "Nagarjuna Kadampa Buddhist Centre", "LOCATION": "17 Guildhall Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.136720, 52.635027 ] }, "image": { "url": "images/locations/424.jpg", "width": 350, "height": 467 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "43", "RELIGION": "Catholic", "NAME": "St Patrick", "LOCATION": "Royal East Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.131874, 52.640040 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "44", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Osborne Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134054, 52.639571 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "44B", "RELIGION": "Mission", "NAME": "", "LOCATION": "Osborne Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134065, 52.639554 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "45", "RELIGION": "Mission", "NAME": "Hope Hall", "LOCATION": "Mansfield Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.132542, 52.638928 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "46", "RELIGION": "Baptist", "NAME": "Trinity Chapel", "LOCATION": "Alfred Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.129942, 52.638709 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "46B", "RELIGION": "Salvation Army", "NAME": "", "LOCATION": "Alfred Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.129908, 52.638709 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "46C", "RELIGION": "Mission", "NAME": "", "LOCATION": "Alfred Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.129873, 52.638709 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "47", "RELIGION": "Mission", "NAME": "Evangelical Mission Hall", "LOCATION": "15 Bedford Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130920, 52.638466 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "48", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Hill Street (also called Lower Hill Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130584, 52.638257 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "49", "RELIGION": "Mission", "NAME": "", "LOCATION": "Kenyon Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127954, 52.637795 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "5", "RELIGION": "Medieval church (destroyed)", "NAME": "St John the Baptist", "LOCATION": "Highcross Street (corner of Causeway Lane, formerly St John's Lane)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.139638, 52.637361 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "50", "RELIGION": "Evangelical Mission", "NAME": "Workmen's Hall \/ Clarence Hall", "LOCATION": "Bread Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130171, 52.637190 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "50B", "RELIGION": "Methodist", "NAME": "Clarence Hall", "LOCATION": "Bread Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130158, 52.637166 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "50C", "RELIGION": "Salvation Army", "NAME": "Citadel", "LOCATION": "Bread Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130152, 52.637142 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "51", "RELIGION": "Mission", "NAME": "Bestwood Hall", "LOCATION": "Vestry Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127632, 52.636287 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "52", "RELIGION": "Mission", "NAME": "Palmerston Mission", "LOCATION": "Taylor Street (formerly Palmerstone Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122160, 52.642596 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "53", "RELIGION": "Mission", "NAME": "Gospel Temperance Mission House", "LOCATION": "Britiannia Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126034, 52.642425 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "54", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Willow Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.121608, 52.642615 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "54B", "RELIGION": "Mission", "NAME": "", "LOCATION": "Willow Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.121568, 52.642605 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "55", "RELIGION": "Methodist", "NAME": "", "LOCATION": "George Street (Bedford Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127109, 52.641457 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "55B", "RELIGION": "Mission", "NAME": "", "LOCATION": "54 Bedford Street (George Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127099, 52.641470 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "56", "RELIGION": "Anglican", "NAME": "St Matthew", "LOCATION": "Montreal Road (formerly Chester Street)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123295, 52.642142 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "57", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "Denman Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125308, 52.641187 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "57B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Denman Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125343, 52.641176 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "58", "RELIGION": "Anglican", "NAME": "Christ Church", "LOCATION": "Bow Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.127042, 52.640735 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "59", "RELIGION": "Mission", "NAME": "", "LOCATION": "Lead Street (Brook Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.124467, 52.640452 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "6", "RELIGION": "Medieval church (destroyed)", "NAME": "St Michael", "LOCATION": "Eastern end of Causeway Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136405, 52.637569 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "60", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Metcalf Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126294, 52.640008 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "60B", "RELIGION": "Mission", "NAME": "Gospel Mission Hall", "LOCATION": "16\/18 Metcalf Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126273, 52.639976 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "61", "RELIGION": "Mission", "NAME": "", "LOCATION": "51 Metcalf Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125124, 52.639835 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "62", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Carley Streeet", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126042, 52.639685 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "62B", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Carley Streeet", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126006, 52.639668 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "63", "RELIGION": "Mission", "NAME": "St Crispin's", "LOCATION": "Lewin Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123237, 52.639778 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "64", "RELIGION": "Latter Day Saints (Mormons)", "NAME": "", "LOCATION": "32 Crafton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125883, 52.638863 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "65", "RELIGION": "Spiritualist", "NAME": "", "LOCATION": "13½ Crafton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126416, 52.638574 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "65B", "RELIGION": "Jewish \/ Hebrew Congregation", "NAME": "", "LOCATION": "13½ Crafton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.126404, 52.638547 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "66", "RELIGION": "Mission", "NAME": "Gladstone Hall", "LOCATION": "Gladstone Street (Wharf Street corner)", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.127089, 52.638365 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "67", "RELIGION": "Mission", "NAME": "", "LOCATION": "74 Curzon Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.120548, 52.640493 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "68", "RELIGION": "Church of Christ", "NAME": "Chistians Meeting House", "LOCATION": "130 Crafton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.122680, 52.638861 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "69", "RELIGION": "Evangelical Mission", "NAME": "Workmen's Hall", "LOCATION": "83 Crafton Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.123614, 52.638511 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "7", "RELIGION": "Medieval church (destroyed)", "NAME": "St Peter", "LOCATION": "St Peter's Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.138281, 52.636728 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "70", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Humberstone Road (Clyde Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.125621, 52.637285 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "71", "RELIGION": "Baptist", "NAME": "Zion Chapel", "LOCATION": "Erskine Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.124316, 52.637433 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "72", "RELIGION": "Anglican", "NAME": "St Luke", "LOCATION": "Humberstone Road (Bell Lane corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.121883, 52.637665 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "73", "RELIGION": "Mission", "NAME": "", "LOCATION": "Cranbourne Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.119298, 52.645673 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "74", "RELIGION": "Mission", "NAME": "", "LOCATION": "Curzon Street (Syston Street corner)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117916, 52.643201 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "75", "RELIGION": "Mission", "NAME": "", "LOCATION": "Birstall Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.118762, 52.643159 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "76", "RELIGION": "Methodist", "NAME": "All Saints Methodist Church", "LOCATION": "Curzon Street (latterly Malabar Road)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.120019, 52.640123 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "77", "RELIGION": "Methodist", "NAME": "", "LOCATION": "Bright Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.117816, 52.639992 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "78", "RELIGION": "Mission", "NAME": "", "LOCATION": "Humberstone Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.115647, 52.639976 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "79", "RELIGION": "Mission", "NAME": "", "LOCATION": "Talbot Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.142250, 52.634978 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "8", "RELIGION": "Medieval church (destroyed)", "NAME": "Augustine (Austin) Friars", "LOCATION": "North-west of West Bridge", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.143501, 52.634086 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "80", "RELIGION": "Anglican", "NAME": "St Nicholas", "LOCATION": "St Nicholas Circle", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.141017, 52.635156 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "81", "RELIGION": "Methodist", "NAME": "", "LOCATION": "St Nicholas Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.139490, 52.635287 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "82", "RELIGION": "Christadelphian", "NAME": "Co-operative Hall", "LOCATION": "High Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136237, 52.635712 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "83", "RELIGION": "Baptist", "NAME": "Harvey Lane Memorial Hall", "LOCATION": "Harvey Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.140225, 52.634186 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "84", "RELIGION": "Anglican", "NAME": "St Martin (formerly St Crosse)", "LOCATION": "Guildhall Lane", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.137178, 52.634717 ] }
+, "image": { "url": "images/locations/84.jpg", "width": 350, "height": 525 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "85", "RELIGION": "Spiritualist", "NAME": "Spiritualist Lecture Hall", "LOCATION": "36 Silver Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135571, 52.635181 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "86", "RELIGION": "Mission", "NAME": "", "LOCATION": "21 Bakehouse Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.139305, 52.633436 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "87", "RELIGION": "Anglican", "NAME": "St Mary de Castro", "LOCATION": "Castle Yard", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.139966, 52.632312 ] }, "image": { "url": "images/locations/87.jpg", "width": 350, "height": 525 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "88", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Friar Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137649, 52.632678 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "89", "RELIGION": "Baptist", "NAME": "", "LOCATION": "Millstone Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137500, 52.632123 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "89B", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Millstone Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137488, 52.632113 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "89C", "RELIGION": "Methodist", "NAME": "Tabernacle", "LOCATION": "Millstone Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137475, 52.632105 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "89D", "RELIGION": "Mission", "NAME": "People's Mission Hall \/ Church Army Barracks", "LOCATION": "Millstone Lane", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137461, 52.632096 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "9", "RELIGION": "Medieval church (destroyed)", "NAME": "St Ursula", "LOCATION": "Peacock Lane (formerly St Francis Lane)", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.137499, 52.634262 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "90", "RELIGION": "Mission", "NAME": "", "LOCATION": "Newarke Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136659, 52.631758 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "91", "RELIGION": "Hindu", "NAME": "Jain Temple", "LOCATION": "Oxford Street", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.136485, 52.630982 ] }, "image": { "url": "images/locations/91.jpg", "width": 350, "height": 233 } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "91B", "RELIGION": "Congregational", "NAME": "Oxford Street United Reformed Church", "LOCATION": "Oxford Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.136397, 52.631013 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "92", "RELIGION": "Spiritualist", "NAME": "St John's Spiritualist Church", "LOCATION": "York Road", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.136127, 52.630703 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "93", "RELIGION": "Congregational", "NAME": "", "LOCATION": "Gallowtree Gate", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130642, 52.635259 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "94", "RELIGION": "Evangelical Mission", "NAME": "Workmen's Hall", "LOCATION": "Halford Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.128471, 52.635048 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "95", "RELIGION": "Christadelphian", "NAME": "Central Hall", "LOCATION": "24 Silver Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134979, 52.635358 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "95B", "RELIGION": "Spiritualist", "NAME": "Leicester Spiritualist Society", "LOCATION": "24 Silver Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.135012, 52.635336 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "96", "RELIGION": "Catholic Apostolic Church", "NAME": "", "LOCATION": "34A Cank Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.134575, 52.634674 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "97", "RELIGION": "Brethren", "NAME": "", "LOCATION": "7½ Halford Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130584, 52.634468 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "97B", "RELIGION": "Catholic Apostolic Church", "NAME": "", "LOCATION": "7½ Halford Street", "INUSE": "Destroyed" }, "geometry": { "type": "Point", "coordinates": [ -1.130526, 52.634475 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "98", "RELIGION": "Spiritualist", "NAME": "Spiritualist Lecture Hall", "LOCATION": "Rupert Street", "INUSE": "No" }, "geometry": { "type": "Point", "coordinates": [ -1.134992, 52.632823 ] } }
+			,
+			{ "type": "Feature", "properties": { "ID_NO": "99", "RELIGION": "Baptist", "NAME": "United \/ Central Baptist Church", "LOCATION": "Charles Street (formerly Upper Charles Street)", "INUSE": "Yes" }, "geometry": { "type": "Point", "coordinates": [ -1.128391, 52.633528 ] } }
+			
+			]
+			}
+  }
+  
+  function populateArray() {
+		//This function initially populates the array that contains the types of religion selected to be viewed on the map 
+		//with all of the 54 different religions represented.
+		var i=0;
+		typeArray[i++]="Anglican";
+		typeArray[i++]="Apostolic Church";
+		typeArray[i++]="Assemblies of God";
+		typeArray[i++]="Baptist";
+		typeArray[i++]="Bible Hall Fellowship";
+		typeArray[i++]="Brethren";
+		typeArray[i++]="Buddhist";
+		typeArray[i++]="Calvinist Independent";
+		typeArray[i++]="Catholic";
+		typeArray[i++]="Catholic Apostolic Church";
+		typeArray[i++]="Chinese Christian Church";
+		typeArray[i++]="Christ Gospel Church";
+		typeArray[i++]="Christadelphian";
+		typeArray[i++]="Christian Scientists";
+		typeArray[i++]="Church of Christ";
+		typeArray[i++]="Church of God";
+		typeArray[i++]="Church of God of Prophecy";
+		typeArray[i++]="Congregational";
+		typeArray[i++]="Elim Church";
+		typeArray[i++]="Evangelical Free Church";
+		typeArray[i++]="Evangelical Mission";
+		typeArray[i++]="Free Gospel";
+		typeArray[i++]="Greek Orthodox";
+		typeArray[i++]="Harvest City Church";
+		typeArray[i++]="Hindu";
+		typeArray[i++]="Independent Holiness Movement";
+		typeArray[i++]="Jehovah\'s Witnesses";
+		typeArray[i++]="Jesus Army";
+		typeArray[i++]="Jewish / Hebrew Congregation";
+		typeArray[i++]="Latter Day Saints (Mormons)";
+		typeArray[i++]="Leicester Christian Fellowship";
+		typeArray[i++]="Living God\'s Church";
+		typeArray[i++]="Medieval church (destroyed)";
+		typeArray[i++]="Methodist";
+		typeArray[i++]="Mission";
+		typeArray[i++]="Muslim";
+		typeArray[i++]="New Jerusalem Church";
+		typeArray[i++]="New Testament Church of God";
+		typeArray[i++]="Polish Roman Catholic";
+		typeArray[i++]="Presbyterian";
+		typeArray[i++]="Salvation Army";
+		typeArray[i++]="Serbian Orthodox Church";
+		typeArray[i++]="Seventh Day Adventist Church";
+		typeArray[i++]="Shiloh Pentecostal Fellowship";
+		typeArray[i++]="Sikh";
+		typeArray[i++]="Society of Friends (Quakers)";
+		typeArray[i++]="Spiritualist";
+		typeArray[i++]="Swedenborgians";
+		typeArray[i++]="True Jesus Church";
+		typeArray[i++]="Ukrainian Catholic Church";
+		typeArray[i++]="Union Churches";
+		typeArray[i++]="Unitarian";
+		typeArray[i++]="United Reformed Church";
+		typeArray[i++]="Universal Pentecostal Church";
+		typeArray[i++]="Wesleyan Holiness Church";
+  }
+  
+  function initialize() {
+		//This function initializes the map	in the map_canvas div and calls the other functions to populate it with markers.
+		hideGone = false  //This is initially set to false, so that all markers are shown.
+		latlng = new google.maps.LatLng(52.63, -1.12);  //This is an approximate location for the centre of Leicester.
+		//These are the options for the new map: it will be a road map, showing a scale and with the overview map initially open.
+		var myOptions = {
+		  zoom: 11,
+		  center: latlng,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP,
+		  scaleControl: true,
+		  overviewMapControl: true,
+		  overviewMapControlOptions: {opened: true}
+		};
+		//We now create a new map document using the options above.
+		map = new google.maps.Map(document.getElementById("map_canvas"),
+			myOptions);
+	
+		//Here we defined a boundary "bounds" object for our dataset.
+		var sw = new google.maps.LatLng(52.58, -1.21);
+		var ne = new google.maps.LatLng(52.68, -1.04);
+		bounds = new google.maps.LatLngBounds(sw, ne);
+		
+		//We then zoom / pan the map to these bounds.
+		map.fitBounds(bounds);
+		
+		//This is a listener that triggers when the user changes the zoom level on the map.
+		google.maps.event.addListener(map, 'zoom_changed', function() {
+			var zoomLevel = map.getZoom();
+			//We don't want to let them zoom out further than level 11:
+			if (zoomLevel < 11) {
+				map.setZoom(11);
+			}
+			//And we don't want them zooming away from our area of interest:
+			var mapCentre = map.getCenter()
+			if (bounds.contains(mapCentre) == false) {
+				map.panToBounds(bounds);
+			}
+		});
+		
+		//This is a listener that triggers when the user finishes dragging the map.
+		google.maps.event.addListener(map, 'dragend', function() {
+			var mapCentre = map.getCenter()
+			//We don't want them moving away from our area of interest:
+			if (bounds.contains(mapCentre) == false) {
+				map.panToBounds(bounds);
+			}
+		});
+		
+		//This listener pans the map to our area of interest if the browser window is resized.
+		google.maps.event.addDomListener(window, 'resize', function() {
+			map.fitBounds(bounds);
+		});
+		
+		//Now we want to create our JSON object, populate our religions array (both above), and then draw the markers on the map.
+		createdata()
+		populateArray()
+		drawMarkers()
+		
+		//Removed:
+		//Then we add a polyline object for the faith trail.
+		//var faithTrailCoordinates = [
+		//	new google.maps.LatLng(?, ?),
+		//	new google.maps.LatLng(?, ?)
+	  	//];
+	  	//var faithTrail = new google.maps.Polyline({
+		//	path: faithTrailCoordinates,
+		//	strokeColor: "#8B0000",
+		//	strokeOpacity: 0.80,
+		//	strokeWeight: 3
+	  	//});
+	  	//faithTrail.setMap(map);
+  }
+
+  function createMarker(mpoint,mtitle,micon) {
+		//This is a function called to create each individual marker on the map.  This needs to be in a separate function,
+		//otherwise the listener will be overwritten with each new marker created.
+		var marker = new google.maps.Marker({
+			position: mpoint,
+			title: mtitle,
+			icon: micon
+		});
+		
+		//This is a listener that brings up an information window when a marker is clicked on.
+		google.maps.event.addListener(marker, "click", function() {
+			var i=0;
+			var x;
+			var y;
+			var JSON_length = worshipJSON.features.length;
+			for (i=0;i<JSON_length;i++)
+			{
+				if (worshipJSON.features[i].properties.ID_NO == marker.title) {
+					y = i;
+					break;
+				}
+			};
+			
+			//This string holds the contents of the information window, using html code for formatting.
+			contentStr = "\
+			<div>\
+			<table style='width:350px;margin-left:15px;margin-right:20px;'>\
+			<tr style='text-align:left;'><td><b>ID No.</b>:</td><td>" + worshipJSON.features[y].properties.ID_NO + "\
+			</td></tr><tr style='text-align:left;'><td><b>Name</b>:</td><td>" + worshipJSON.features[y].properties.NAME + "\
+			</td></tr><tr style='text-align:left;'><td><b>Religion</b>:</td><td>" + worshipJSON.features[y].properties.RELIGION + "\
+			</td></tr><tr style='text-align:left;'><td><b>Location</b>:</td><td>" + worshipJSON.features[y].properties.LOCATION + "\
+			</td></tr><tr style='text-align:left;'><td><b>In use?</b></td><td>" + worshipJSON.features[y].properties.INUSE + "\
+			</td></tr></table>";
+			
+			//This adds an image to the information window, if an image URL is specified for that particular object.
+			if (worshipJSON.features[y].image != null) {
+				contentStr = contentStr + "<a href=" + worshipJSON.features[y].image.url + " target='_blank'><img src=" + worshipJSON.features[y].image.url + " width=" + worshipJSON.features[y].image.width + " height=" + worshipJSON.features[y].image.height + " alt='Image of location' style='display:block;width:350px;margin-left:15px;margin-right:20px;'/></a><p style='width:350px;margin-left:15px;margin-right:20px;font-size:0.6em;'>(Click image to enlarge in new window)</p>";
+			}
+			
+			contentStr = contentStr + "</div>"
+			
+			infowindow.maxWidth = 400;
+			infowindow.setContent(contentStr);
+			infowindow.open(map, marker);
+		});
+		
+		//This is a listener that zooms the map into a marker when it is double clicked.  It seems a little unreliable, so
+		//it is not mentioned within the webpage, but should work most of the time!
+		google.maps.event.addListener(marker, "dblclick", function() {
+			map.setCenter(marker.position);
+			map.setZoom(16);
+			//If the map has drifted out of our bounds, we pan it back.
+			var mapCentre = map.getCenter()
+			if (bounds.contains(mapCentre) == false) {
+				map.panToBounds(bounds);
+			}
+		});
+		
+		//We then return the marker to the drawMarkers function.
+		return marker;
+  }
+  
+  function drawMarkers() {
+		//This is a function to draw the markers on the map.
+		var i=0;
+		var k=0;
+		var resultTable = "<table><tr style='text-align:left;'><td><b>ID No.</b></td><td><b>Name</b></td><td><b>Religion</b></td><td><b>Location</b></td><td><b>In use?</b></td></tr>";
+		
+		//Firstly, we have to clear away any markers already present, otherwise they will just stack up on top of each other.
+		if (markersArray) {
+			for (i in markersArray) {
+      			markersArray[i].setMap(null);
+    		}
+			markersArray.length = 0;
+		}
+		
+		//Add a marker to the map to show that we are processing the drawing.
+		var markerProc = new google.maps.Marker({
+			position: map.getCenter(),
+			title: "processing",
+			icon: img_proc
+		});
+		markerProc.setMap(map);
+		
+		//Then we search through the JSON object and check if the religion of each individual record is in the array that tells
+		//us which religions we have selected using the checkboxes.  It also checks if the hideGone attribute is true (i.e.
+		//do not draw markers for records that relate to defunct places of worship) or false (i.e. draw all records for the 
+		//selected religions).  The marker for usage state is also specified here.  The markers are added to an array.
+		for (i=0;i<worshipJSON.features.length;i++) {
+			for (k=0;k<typeArray.length;k++) {
+				if (worshipJSON.features[i].properties.RELIGION == typeArray[k]) {
+					var xyStr = new String(worshipJSON.features[i].geometry.coordinates);
+					var comma = xyStr.search(",");
+					var latStr = xyStr.slice(comma + 1, xyStr.length);
+					var longStr = xyStr.slice(0, comma - 1);
+					var markerlatlng = new google.maps.LatLng(latStr, longStr);
+					if (worshipJSON.features[i].properties.INUSE == "Destroyed"  && hideGone == false) {
+						//We create the marker.
+						marker = createMarker(markerlatlng,worshipJSON.features[i].properties.ID_NO,img_dest);
+				  		//Add it to the marker array.
+						markersArray.push(marker);
+						//We also append the result to a string object containing the html code for the results table at the bottom of the page.
+						resultTable = resultTable + "<tr style='text-align:left;'><td>" + worshipJSON.features[i].properties.ID_NO + "</td><td>" + worshipJSON.features[i].properties.NAME + "</td><td>" + worshipJSON.features[i].properties.RELIGION+ "</td><td>" + worshipJSON.features[i].properties.LOCATION + "</td><td>" + worshipJSON.features[i].properties.INUSE +"</td></tr>";
+					}
+					else if (worshipJSON.features[i].properties.INUSE == "No" && hideGone == false) {
+						marker = createMarker(markerlatlng,worshipJSON.features[i].properties.ID_NO,img_no);
+						markersArray.push(marker);
+						resultTable = resultTable + "<tr style='text-align:left;'><td>" + worshipJSON.features[i].properties.ID_NO + "</td><td>" + worshipJSON.features[i].properties.NAME + "</td><td>" + worshipJSON.features[i].properties.RELIGION+ "</td><td>" + worshipJSON.features[i].properties.LOCATION + "</td><td>" + worshipJSON.features[i].properties.INUSE +"</td></tr>";
+					}
+					else if (worshipJSON.features[i].properties.INUSE == "Yes") {
+						marker = createMarker(markerlatlng,worshipJSON.features[i].properties.ID_NO,img_yes);
+						markersArray.push(marker);
+						resultTable = resultTable + "<tr style='text-align:left;'><td>" + worshipJSON.features[i].properties.ID_NO + "</td><td>" + worshipJSON.features[i].properties.NAME + "</td><td>" + worshipJSON.features[i].properties.RELIGION+ "</td><td>" + worshipJSON.features[i].properties.LOCATION + "</td><td>" + worshipJSON.features[i].properties.INUSE +"</td></tr>";
+					}
+					else if (worshipJSON.features[i].properties.INUSE == "Unknown" && hideGone == false) {
+						marker = createMarker(markerlatlng,worshipJSON.features[i].properties.ID_NO,img_unk);
+						markersArray.push(marker);
+						resultTable = resultTable + "<tr style='text-align:left;'><td>" + worshipJSON.features[i].properties.ID_NO + "</td><td>" + worshipJSON.features[i].properties.NAME + "</td><td>" + worshipJSON.features[i].properties.RELIGION+ "</td><td>" + worshipJSON.features[i].properties.LOCATION + "</td><td>" + worshipJSON.features[i].properties.INUSE +"</td></tr>";
+					}
+					
+					//If we've found the relevant religion, we can pop out of this sub loop as there is no reason to keep on checking.
+					break;
+				}
+			}
+		}
+		
+		//We then add the markers in the array to the map.
+	  	if (markersArray) {
+			for (i in markersArray) {
+				markersArray[i].setMap(map);
+			}
+	  	}
+		
+		//And write the results at the bottom of the page, if there are any.
+		if (resultTable != "<table><tr style='text-align:left;'><td><b>ID No.</b></td><td><b>Name</b></td><td><b>Religion</b></td><td><b>Location</b></td><td><b>In use?</b></td></tr>")
+		{
+			resultTable = resultTable + "</table></p>";
+			document.getElementById("results").innerHTML="<p><b>Results:</b>" + resultTable;
+		}
+		//If there are no results, clear that div.		
+		else
+		{
+			document.getElementById("results").innerHTML="";
+		}
+		
+		//Remove the processing marker.
+		markerProc.setMap(null);
+  }
+
+  function chkboxState(tickedBoo, worshipType) {
+	//This function is called when a religion checkbox changes state.
+	//If a tickbox is ticked, it adds that religion to the religions array, then resorts it alphabetically, then redraws the markers.
+	if (tickedBoo==true)
+	{
+		typeArray.push(worshipType);
+		typeArray.sort();	
+		drawMarkers();
+	}
+	//If a tickbox is unticked, that religion is taken out of the religions array, then the markers are redrawn.
+	else if (tickedBoo==false)
+	{
+		var i=0;
+		var j=typeArray.length;
+		for (i=0;i<j;i++)
+		{
+			if (typeArray[i]==worshipType)
+			{
+				typeArray.splice(i,1);
+				//If we've found the relevant religion, we can pop out of this sub loop as there is no reason to keep on checking.
+				break;
+			}
+		}		
+		drawMarkers();
+	}
+  }
+
+  function setlocation(address) {
+		//This function is used to search for particular locations in Leicester using the Google Maps built-in geocoding system.
+		//It is used to search for places in Leicester, NOT to search our places of worship.
+		var i=0;
+		var j = [];
+		var k;
+		
+		//Firstly, we pop out if the user hasn't entered anything in the address box.
+		if (address=="Enter place, road or postcode here" || address=="") {
+           	alert("Enter a place, road or postcode to search");
+        }
+        else  	
+		{
+			//We geocode the result using the built-in geocoder.
+			geocoder.geocode( { 'address': address, 'bounds': bounds}, function(results, status) {
+				//We check that the result is ok.
+				if (status == google.maps.GeocoderStatus.OK) {
+						for (i=0;i<results.length;i++) {
+							//Some results do not seem to have bounds, so we check for these first.
+							if (results[i].geometry.bounds == null) {
+								//If the location of the result is within our dataset bounds, we add it to an array called 'j'.
+								if (bounds.contains(results[i].geometry.location)) {
+									j.push(i);
+								}
+							}
+							//Alternatively, if the bounds of the result intersect with or are contained by our dataset bounds,
+							//we add the result to our 'j' array.
+							else if (bounds.intersects(results[i].geometry.bounds) || bounds.contains(results[i].geometry.location)) {
+								j.push(i);
+							}
+						}
+						//If 'j' is empty, then any results found are outside our area of interest and, thus, we tell the user that
+						//we were unable to find what they searched for.
+						if (j.length == 0) {
+							alert("Unable to find that location.");
+						}
+						//If 'j' has more than one result in it, we tell the user and then add together the bounds for all of the 
+						//results.  We then zoom to that bounds object.
+						else if (j.length > 1) {
+							alert(j.length + " results found.  Zooming to extent of all results.");
+							k = j[0];
+							var resultBounds = results[k].geometry.bounds
+							for (i=1;i<j.length;i++) {
+								k = j[i];
+								if (results[k].geometry.bounds == null) {
+									//Do nothing... let's just get to the next result, it might be more useful!
+								}
+								else if (resultBounds == null) {
+									//If the first result's bounds were null, we'd better take this objects bounds...
+									resultBounds = results[k].geometry.bounds;
+								}
+								else {
+									//If this result has bounds, let's join our bounds together.
+									resultBounds.union(results[k].geometry.bounds);
+								}
+							}
+							if (resultBounds == null) {
+								//This result does not seem likely, as it seems only village / suburb names have no bounds and two 
+								//suburb names within Leicester are unlikely to be the same. So we'll just zoom to first result in
+								//the event that this does actually occur.							
+								k = j[0];
+								map.setCenter(results[k].geometry.location);
+								map.setZoom(14);
+							}
+							else {
+								//Otherwise, we simply zoom the map to the resulting composite bounds variable.
+								map.fitBounds(resultBounds);
+							}
+						}
+						//Otherwise, if 'j' only has one entry, we zoom to that result.
+						else {
+							k = j[0];
+							//If the result has no bounds, we zoom to its location.
+							if (results[k].geometry.bounds == null) {
+								map.setCenter(results[k].geometry.location);
+								map.setZoom(14);
+							}
+							//Otherwise, we zoom to its bounds.
+							else {
+								map.fitBounds(results[k].geometry.bounds);
+							}
+						}
+					} 
+				//If the result is bad, we tell the user that their location cannot be found.
+				else {
+					alert("Unable to find that location.");
+				}
+			});
+		}
+		
+		//If the map has drifted out of our bounds, we pan it back.
+		var mapCentre = map.getCenter()
+		if (bounds.contains(mapCentre) == false) {
+			map.panToBounds(bounds);
+		}
+  }
+  
+  //This is a listener that runs the initialise function when it detects the webpage loading.
+  google.maps.event.addDomListener(window, 'load', initialize);
+  
+</script>
+
+</head>
+<body>
+<!-- This div contains the map canvas. -->
+<div id="map_canvas" style="width:100%; height:100%">
+<!-- This message is displayed if scripts are turned off in the user's browser or their browser does not support Javascript. -->
+<noscript>
+<b>This webpage requires JavaScript to function.  You will need to allow scripts in your browser or, if necessary, switch to a browser that supports Javascript to view the content on this page.</b>
+<br/>For example:<br/>
+<img src="images/IE_scripts_1.png" width="500" height="26" alt="IE script example">
+<br/>or<br/>
+<img src="images/IE_scripts_2.png" width="500" height="39" alt="IE script example">
+</noscript>
+</div>
+
+<!-- This div contains the form with checkboxes to query different religions etc. -->
+<div style="width:95%">
+<p>Instructions on using this website can be found <a href="instructions.html" target="_blank">here</a></p>
+<form action="#"> <!-- We do not want this form to ever be submitted, so we will be interupting any "Enter" key presses done by the user on each of the various elements. Unfortunately, this interruption is one element that does not seem to work in older versions of Internet Explorer (i.e. v.7 and earlier). -->
+    <table>
+    <tr style="text-align:left;">
+    	<!-- This checkbox is used to select all or none of the various religions. It switches all of the other checkboxes to match the state of this one. Then it clears the religions array. If the state of the checkbox is "true", it then repopulates the religions array with all of the religions, as on initialization. -->
+		<td><input type="checkbox" name="selectAll" id="chkAll" onChange="
+            var ticked=selectAll.checked;
+            chkAnglican.checked=ticked;
+            chkApostolic.checked=ticked;
+            chkAssemblies.checked=ticked;
+            chkBaptist.checked=ticked;
+            chkBible.checked=ticked;
+            chkBrethren.checked=ticked;
+            chkBuddhist.checked=ticked;
+            chkCalvinist.checked=ticked;
+            chkCatholic.checked=ticked;
+            chkCAC.checked=ticked;
+            chkChinese.checked=ticked;
+            chkChrist.checked=ticked;
+            chkChristadelphian.checked=ticked;
+            chkChristian.checked=ticked;
+            chkCOC.checked=ticked;
+            chkCOG.checked=ticked;
+            chkCOGOP.checked=ticked;
+            chkCongregational.checked=ticked;
+            chkElim.checked=ticked;
+            chkEvangelical.checked=ticked;
+            chkEvangelicalM.checked=ticked;
+            chkFree.checked=ticked;
+            chkGreek.checked=ticked;
+            chkHarvest.checked=ticked;
+            chkHindu.checked=ticked;
+            chkIndependent.checked=ticked;
+            chkJehovah.checked=ticked;
+            chkJesus.checked=ticked;
+            chkJewish.checked=ticked;
+            chkLatter.checked=ticked;
+            chkLeicester.checked=ticked;
+            chkLiving.checked=ticked;
+            chkMedieval.checked=ticked;
+            chkMethodist.checked=ticked;
+            chkMission.checked=ticked;
+            chkMuslim.checked=ticked;
+            chkNewJerusalem.checked=ticked;
+            chkNewTestament.checked=ticked;
+            chkPolish.checked=ticked;
+            chkPresbyterian.checked=ticked;
+            chkSalvation.checked=ticked;
+            chkSerbian.checked=ticked;
+            chkSeventh.checked=ticked;
+            chkShiloh.checked=ticked;
+            chkSikh.checked=ticked;
+            chkSociety.checked=ticked;
+            chkSpiritualist.checked=ticked;
+            chkSwedenborgians.checked=ticked;
+            chkTrueJesus.checked=ticked;
+            chkUkrainian.checked=ticked;
+            chkUnion.checked=ticked;
+            chkUnitarian.checked=ticked;
+            chkUnited.checked=ticked;
+            chkUniversal.checked=ticked;
+            chkWesleyan.checked=ticked;
+            
+            var j=typeArray.length;
+            typeArray.splice(0,j);
+            
+            if (ticked==true)
+            {
+				populateArray()
+            }
+			drawMarkers();
+        "
+        checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> <b>Select All / None</b></td>
+        <!-- This checkbox is used to hide or display any defunct places of worship.  It simply sets the hideGone variable to match the state of the checkbox (i.e. true or false) and then calls the redraw markers function. -->
+        <td><input type="checkbox" name="usage" id="chkUsage" onChange="hideGone=chkUsage.checked; drawMarkers()" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> <b>Hide out of use / destroyed</b></td>
+      	<!-- This cell contains a text box and two buttons to search and reset the map. The search box / button obtains the value entered into the textbox by the user and launches the setlocation function (i.e. the geocoding function). -->
+        <td colspan="3" style="text-align: right;">Address:<input type="text" id="txtLocation" size="40" value="Enter place, road or postcode here" 
+        onFocus="
+        if (txtLocation.value=='Enter place, road or postcode here')
+        {
+        	txtLocation.value=''
+        };" 
+        onKeyPress="
+        if (event.which == 13 || event.keyCode == 13)
+        {
+        	var address = txtLocation.value; 
+        	setlocation(address); 
+        	return false;
+        }"/>
+        <input type="button" id="butLocation" value="Search" onClick="
+    		var address = txtLocation.value;
+			setlocation(address);"
+        onKeyPress="
+        if (event.which == 13 || event.keyCode == 13)
+        {
+        	var address = txtLocation.value; 
+        	setlocation(address); 
+        	return false;
+        }"/>
+        <!-- This button resets the map. It launches the initialization function and then resets all of the checkboxes to their correct values. -->
+        <input type="button" id="butCentre" value="Reset Map" onClick="
+        	initialize();
+            chkUsage.checked=false;
+            var ticked='true';
+        	selectAll.checked=ticked;
+            chkAnglican.checked=ticked;
+            chkApostolic.checked=ticked;
+            chkAssemblies.checked=ticked;
+            chkBaptist.checked=ticked;
+            chkBible.checked=ticked;
+            chkBrethren.checked=ticked;
+            chkBuddhist.checked=ticked;
+            chkCalvinist.checked=ticked;
+            chkCatholic.checked=ticked;
+            chkCAC.checked=ticked;
+            chkChinese.checked=ticked;
+            chkChrist.checked=ticked;
+            chkChristadelphian.checked=ticked;
+            chkChristian.checked=ticked;
+            chkCOC.checked=ticked;
+            chkCOG.checked=ticked;
+            chkCOGOP.checked=ticked;
+            chkCongregational.checked=ticked;
+            chkElim.checked=ticked;
+            chkEvangelical.checked=ticked;
+            chkEvangelicalM.checked=ticked;
+            chkFree.checked=ticked;
+            chkGreek.checked=ticked;
+            chkHarvest.checked=ticked;
+            chkHindu.checked=ticked;
+            chkIndependent.checked=ticked;
+            chkJehovah.checked=ticked;
+            chkJesus.checked=ticked;
+            chkJewish.checked=ticked;
+            chkLatter.checked=ticked;
+            chkLeicester.checked=ticked;
+            chkLiving.checked=ticked;
+            chkMedieval.checked=ticked;
+            chkMethodist.checked=ticked;
+            chkMission.checked=ticked;
+            chkMuslim.checked=ticked;
+            chkNewJerusalem.checked=ticked;
+            chkNewTestament.checked=ticked;
+            chkPolish.checked=ticked;
+            chkPresbyterian.checked=ticked;
+            chkSalvation.checked=ticked;
+            chkSerbian.checked=ticked;
+            chkSeventh.checked=ticked;
+            chkShiloh.checked=ticked;
+            chkSikh.checked=ticked;
+            chkSociety.checked=ticked;
+            chkSpiritualist.checked=ticked;
+            chkSwedenborgians.checked=ticked;
+            chkTrueJesus.checked=ticked;
+            chkUkrainian.checked=ticked;
+            chkUnion.checked=ticked;
+            chkUnitarian.checked=ticked;
+            chkUnited.checked=ticked;
+            chkUniversal.checked=ticked;
+            chkWesleyan.checked=ticked;"
+        onKeyPress="
+        if (event.which == 13 || event.keyCode == 13)
+        { 
+        	initialize();
+            chkUsage.checked=false;
+            var ticked='true';
+        	selectAll.checked=ticked;
+            chkAnglican.checked=ticked;
+            chkApostolic.checked=ticked;
+            chkAssemblies.checked=ticked;
+            chkBaptist.checked=ticked;
+            chkBible.checked=ticked;
+            chkBrethren.checked=ticked;
+            chkBuddhist.checked=ticked;
+            chkCalvinist.checked=ticked;
+            chkCatholic.checked=ticked;
+            chkCAC.checked=ticked;
+            chkChinese.checked=ticked;
+            chkChrist.checked=ticked;
+            chkChristadelphian.checked=ticked;
+            chkChristian.checked=ticked;
+            chkCOC.checked=ticked;
+            chkCOG.checked=ticked;
+            chkCOGOP.checked=ticked;
+            chkCongregational.checked=ticked;
+            chkElim.checked=ticked;
+            chkEvangelical.checked=ticked;
+            chkEvangelicalM.checked=ticked;
+            chkFree.checked=ticked;
+            chkGreek.checked=ticked;
+            chkHarvest.checked=ticked;
+            chkHindu.checked=ticked;
+            chkIndependent.checked=ticked;
+            chkJehovah.checked=ticked;
+            chkJesus.checked=ticked;
+            chkJewish.checked=ticked;
+            chkLatter.checked=ticked;
+            chkLeicester.checked=ticked;
+            chkLiving.checked=ticked;
+            chkMedieval.checked=ticked;
+            chkMethodist.checked=ticked;
+            chkMission.checked=ticked;
+            chkMuslim.checked=ticked;
+            chkNewJerusalem.checked=ticked;
+            chkNewTestament.checked=ticked;
+            chkPolish.checked=ticked;
+            chkPresbyterian.checked=ticked;
+            chkSalvation.checked=ticked;
+            chkSerbian.checked=ticked;
+            chkSeventh.checked=ticked;
+            chkShiloh.checked=ticked;
+            chkSikh.checked=ticked;
+            chkSociety.checked=ticked;
+            chkSpiritualist.checked=ticked;
+            chkSwedenborgians.checked=ticked;
+            chkTrueJesus.checked=ticked;
+            chkUkrainian.checked=ticked;
+            chkUnion.checked=ticked;
+            chkUnitarian.checked=ticked;
+            chkUnited.checked=ticked;
+            chkUniversal.checked=ticked;
+            chkWesleyan.checked=ticked;
+            return false;
+        }"/></td>
+    </tr>
+    <tr style="text-align:left;">
+    	<!-- These checkboxes are used to select whether to display the various religions. They record their value (i.e. true / false) and then launch the chkboxState function to add / remove the relevant religion from the religions array and redraw the markers. -->
+    	<td><input type="checkbox" name="religion" id="chkAnglican" onChange="var ticked=chkAnglican.checked; chkboxState(ticked, 'Anglican')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Anglican</td>
+    	<td><input type="checkbox" name="religion" id="chkApostolic" onChange="var ticked=chkApostolic.checked; chkboxState(ticked, 'Apostolic Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Apostolic Church</td>
+    	<td><input type="checkbox" name="religion" id="chkAssemblies" onChange="var ticked=chkAssemblies.checked; chkboxState(ticked, 'Assemblies of God')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Assemblies of God</td>
+   		<td><input type="checkbox" name="religion" id="chkBaptist" onChange="var ticked=chkBaptist.checked; chkboxState(ticked, 'Baptist')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Baptist</td>
+    	<td><input type="checkbox" name="religion" id="chkBible" onChange="var ticked=chkBible.checked; chkboxState(ticked, 'Bible Hall Fellowship')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Bible Hall Fellowship</td>
+    </tr>
+    <tr style="text-align:left;">
+        <td><input type="checkbox" name="religion" id="chkBrethren" onChange="var ticked=chkBrethren.checked; chkboxState(ticked, 'Brethren')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Brethren</td>
+        <td><input type="checkbox" name="religion" id="chkBuddhist" onChange="var ticked=chkBuddhist.checked; chkboxState(ticked, 'Buddhist')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Buddhist</td>
+    	<td><input type="checkbox" name="religion" id="chkCalvinist" onChange="var ticked=chkCalvinist.checked; chkboxState(ticked, 'Calvinist Independent')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Calvinist Independent</td>
+    	<td><input type="checkbox" name="religion" id="chkCatholic" onChange="var ticked=chkCatholic.checked; chkboxState(ticked, 'Catholic')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Catholic</td>
+    	<td><input type="checkbox" name="religion" id="chkCAC" onChange="var ticked=chkCAC.checked; chkboxState(ticked, 'Catholic Apostolic Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Catholic Apostolic Church</td>
+    </tr>
+	<tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkChinese" onChange="var ticked=chkChinese.checked; chkboxState(ticked, 'Chinese Christian Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Chinese Christian Church</td>
+    	<td><input type="checkbox" name="religion" id="chkChrist" onChange="var ticked=chkChrist.checked; chkboxState(ticked, 'Christ Gospel Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Christ Gospel Church</td>
+    	<td><input type="checkbox" name="religion" id="chkChristadelphian" onChange="var ticked=chkChristadelphian.checked; chkboxState(ticked, 'Christadelphian')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Christadelphian</td>
+    	<td><input type="checkbox" name="religion" id="chkChristian" onChange="var ticked=chkChristian.checked; chkboxState(ticked, 'Christian Scientists')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Christian Scientists</td>
+    	<td><input type="checkbox" name="religion" id="chkCOC" onChange="var ticked=chkCOC.checked; chkboxState(ticked, 'Church of Christ')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Church of Christ</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkCOG" onChange="var ticked=chkCOG.checked; chkboxState(ticked, 'Church of God')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Church of God</td>
+    	<td><input type="checkbox" name="religion" id="chkCOGOP" onChange="var ticked=chkCOGOP.checked; chkboxState(ticked, 'Church of God of Prophecy')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Church of God of Prophecy</td>
+    	<td><input type="checkbox" name="religion" id="chkCongregational" onChange="var ticked=chkCongregational.checked; chkboxState(ticked, 'Congregational')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Congregational</td>
+    	<td><input type="checkbox" name="religion" id="chkElim" onChange="var ticked=chkElim.checked; chkboxState(ticked, 'Elim Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Elim Church</td>
+    	<td><input type="checkbox" name="religion" id="chkEvangelical" onChange="var ticked=chkEvangelical.checked; chkboxState(ticked, 'Evangelical Free Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Evangelical Free Church</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkEvangelicalM" onChange="var ticked=chkEvangelicalM.checked; chkboxState(ticked, 'Evangelical Mission')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Evangelical Mission</td>
+    	<td><input type="checkbox" name="religion" id="chkFree" onChange="var ticked=chkFree.checked; chkboxState(ticked, 'Free Gospel')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Free Gospel</td>
+    	<td><input type="checkbox" name="religion" id="chkGreek" onChange="var ticked=chkGreek.checked; chkboxState(ticked, 'Greek Orthodox')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Greek Orthodox</td>
+    	<td><input type="checkbox" name="religion" id="chkHarvest" onChange="var ticked=chkHarvest.checked; chkboxState(ticked, 'Harvest City Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Harvest City Church</td>
+    	<td><input type="checkbox" name="religion" id="chkHindu" onChange="var ticked=chkHindu.checked; chkboxState(ticked, 'Hindu')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Hindu</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkIndependent" onChange="var ticked=chkIndependent.checked; chkboxState(ticked, 'Independent Holiness Movement')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Independent Holiness Movement</td>
+    	<td><input type="checkbox" name="religion" id="chkJehovah" onChange="var ticked=chkJehovah.checked; chkboxState(ticked, 'Jehovah\'s Witnesses')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Jehovah's Witnesses</td>
+    	<td><input type="checkbox" name="religion" id="chkJesus" onChange="var ticked=chkJesus.checked; chkboxState(ticked, 'Jesus Army')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Jesus Army</td>
+    	<td><input type="checkbox" name="religion" id="chkJewish" onChange="var ticked=chkJewish.checked; chkboxState(ticked, 'Jewish / Hebrew Congregation')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Jewish / Hebrew Congregation</td>
+    	<td><input type="checkbox" name="religion" id="chkLatter" onChange="var ticked=chkLatter.checked; chkboxState(ticked, 'Latter Day Saints (Mormons)')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Latter Day Saints (Mormons)</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkLeicester" onChange="var ticked=chkLeicester.checked; chkboxState(ticked, 'Leicester Christian Fellowship')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Leicester Christian Fellowship</td>
+    	<td><input type="checkbox" name="religion" id="chkLiving" onChange="var ticked=chkLiving.checked; chkboxState(ticked, 'Living God\'s Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Living God's Church</td>
+    	<td><input type="checkbox" name="religion" id="chkMedieval" onChange="var ticked=chkMedieval.checked; chkboxState(ticked, 'Medieval church (destroyed)')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Medieval church (destroyed)</td>
+    	<td><input type="checkbox" name="religion" id="chkMethodist" onChange="var ticked=chkMethodist.checked; chkboxState(ticked, 'Methodist')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Methodist</td>
+    	<td><input type="checkbox" name="religion" id="chkMission" onChange="var ticked=chkMission.checked; chkboxState(ticked, 'Mission')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Mission</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkMuslim" onChange="var ticked=chkMuslim.checked; chkboxState(ticked, 'Muslim')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Muslim</td>
+    	<td><input type="checkbox" name="religion" id="chkNewJerusalem" onChange="var ticked=chkNewJerusalem.checked; chkboxState(ticked, 'New Jerusalem Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> New Jerusalem Church</td>
+    	<td><input type="checkbox" name="religion" id="chkNewTestament" onChange="var ticked=chkNewTestament.checked; chkboxState(ticked, 'New Testament Church of God')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> New Testament Church of God</td>
+    	<td><input type="checkbox" name="religion" id="chkPolish" onChange="var ticked=chkPolish.checked; chkboxState(ticked, 'Polish Roman Catholic')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Polish Roman Catholic</td>
+    	<td><input type="checkbox" name="religion" id="chkPresbyterian" onChange="var ticked=chkPresbyterian.checked; chkboxState(ticked, 'Presbyterian')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Presbyterian</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkSalvation" onChange="var ticked=chkSalvation.checked; chkboxState(ticked, 'Salvation Army')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Salvation Army</td>
+    	<td><input type="checkbox" name="religion" id="chkSerbian" onChange="var ticked=chkSerbian.checked; chkboxState(ticked, 'Serbian Orthodox Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Serbian Orthodox Church</td>
+    	<td><input type="checkbox" name="religion" id="chkSeventh" onChange="var ticked=chkSeventh.checked; chkboxState(ticked, 'Seventh Day Adventist Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Seventh Day Adventist Church</td>
+    	<td><input type="checkbox" name="religion" id="chkShiloh" onChange="var ticked=chkShiloh.checked; chkboxState(ticked, 'Shiloh Pentecostal Fellowship')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Shiloh Pentecostal Fellowship</td>
+    	<td><input type="checkbox" name="religion" id="chkSikh" onChange="var ticked=chkSikh.checked; chkboxState(ticked, 'Sikh')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Sikh</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkSociety" onChange="var ticked=chkSociety.checked; chkboxState(ticked, 'Society of Friends (Quakers)')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Society of Friends (Quakers)</td>
+    	<td><input type="checkbox" name="religion" id="chkSpiritualist" onChange="var ticked=chkSpiritualist.checked; chkboxState(ticked, 'Spiritualist')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Spiritualist</td>
+    	<td><input type="checkbox" name="religion" id="chkSwedenborgians" onChange="var ticked=chkSwedenborgians.checked; chkboxState(ticked, 'Swedenborgians')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Swedenborgians</td>
+    	<td><input type="checkbox" name="religion" id="chkTrueJesus" onChange="var ticked=chkTrueJesus.checked; chkboxState(ticked, 'True Jesus Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> True Jesus Church</td>
+    	<td><input type="checkbox" name="religion" id="chkUkrainian" onChange="var ticked=chkUkrainian.checked; chkboxState(ticked, 'Ukrainian Catholic Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Ukrainian Catholic Church</td>
+    </tr>
+    <tr style="text-align:left;">
+    	<td><input type="checkbox" name="religion" id="chkUnion" onChange="var ticked=chkUnion.checked; chkboxState(ticked, 'Union Churches')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Union Churches</td>
+    	<td><input type="checkbox" name="religion" id="chkUnitarian" onChange="var ticked=chkUnitarian.checked; chkboxState(ticked, 'Unitarian')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Unitarian</td>
+    	<td><input type="checkbox" name="religion" id="chkUnited" onChange="var ticked=chkUnited.checked; chkboxState(ticked, 'United Reformed Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> United Reformed Church <span style="font-size:x-small">(see also Congregational)</span></td>
+    	<td><input type="checkbox" name="religion" id="chkUniversal" onChange="var ticked=chkUniversal.checked; chkboxState(ticked, 'Universal Pentecostal Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Universal Pentecostal Church</td>
+    	<td><input type="checkbox" name="religion" id="chkWesleyan" onChange="var ticked=chkWesleyan.checked; chkboxState(ticked, 'Wesleyan Holiness Church')" checked="checked" onKeyPress="if (event.which == 13 || event.keyCode == 13) {return false;}"/> Wesleyan Holiness Church</td>
+    </tr>
+    </table>
+</form>
+<!-- Here we give some download links and a contact email address. -->
+<p><b>Downloads etc.</b>:<br/>
+<a href="worship.kml">KML layer</a> (for GoogleEarth use)<br/>
+<a href="worship.zip">Shapefile</a> (for use in other GIS software; uses GB OS coordinates / projection)<br/>
+<a href="worship.xls">Excel spreadsheet</a><br/></p>
+</div>
+
+<div id="results" style="width:95%">
+<!-- Empty div to write results to. -->
+</div>
+
+</body>
+</html>
